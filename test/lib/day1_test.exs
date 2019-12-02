@@ -8,12 +8,10 @@ defmodule Advent2019.Day1Test do
   @puzzle_path Path.expand("../fixtures/day1/puzzle.txt", __DIR__)
 
   test "run part1 puzzle" do
-    IO.puts("Day1 / Part1")
-    @puzzle_path |> Part1.run() |> IO.puts()
+    assert Part1.run(@puzzle_path) == 3_495_189
   end
 
   test "run part2 puzzle" do
-    IO.puts("Day1 / Part2")
-    @puzzle_path |> Part2.run() |> IO.puts()
+    assert Part2.run(@puzzle_path) == 5_239_910
   end
 end
