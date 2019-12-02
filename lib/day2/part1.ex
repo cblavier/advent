@@ -1,14 +1,16 @@
 defmodule Advent2019.Day2.Part1 do
   def run(path) do
-    opcodes =
-      path
-      |> File.read!()
-      |> String.split(",")
-      |> Enum.map(&String.to_integer/1)
+    path
+    |> File.read!()
+    |> String.split(",")
+    |> Enum.map(&String.to_integer/1)
+    |> run_code_with_state({12, 2})
+  end
 
-    opcodes
-    |> List.replace_at(1, 12)
-    |> List.replace_at(2, 2)
+  def run_code_with_state(code, {noun, verb}) do
+    code
+    |> List.replace_at(1, noun)
+    |> List.replace_at(2, verb)
     |> run_code()
     |> Enum.at(0)
   end
