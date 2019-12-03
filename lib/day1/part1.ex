@@ -2,7 +2,7 @@ defmodule Advent2019.Day1.Part1 do
   def run(path) do
     path
     |> File.read!()
-    |> String.split("\n")
+    |> String.split()
     |> Enum.map(&String.to_integer/1)
     |> Enum.map(&fuel/1)
     |> Enum.sum()

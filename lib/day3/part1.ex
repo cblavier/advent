@@ -1,10 +1,6 @@
 defmodule Advent2019.Day3.Part1 do
   def run(file_path) do
-    [path1, path2] =
-      file_path
-      |> File.read!()
-      |> String.split("\n")
-
+    [path1, path2] = file_path |> File.read!() |> String.split()
     distance_to_closest_intersection(path1, path2)
   end
 
@@ -27,8 +23,7 @@ defmodule Advent2019.Day3.Part1 do
 
     intersections
     |> Enum.map(&manhattan_distance/1)
-    |> Enum.sort()
-    |> Enum.at(0)
+    |> Enum.min()
   end
 
   @doc ~S"""
@@ -48,10 +43,10 @@ defmodule Advent2019.Day3.Part1 do
   def detailed_path(path) when is_list(path) do
     path
     |> Enum.reduce([{0, 0}], fn
-      {"R", distance}, acc -> inc_pos_x(acc, distance)
-      {"L", distance}, acc -> inc_pos_x(acc, -distance)
-      {"U", distance}, acc -> inc_pos_y(acc, distance)
-      {"D", distance}, acc -> inc_pos_y(acc, -distance)
+      {"R", distance}, acc -> inc_pos(acc, distance, 0)
+      {"L", distance}, acc -> inc_pos(acc, -distance, 0)
+      {"U", distance}, acc -> inc_pos(acc, 0, distance)
+      {"D", distance}, acc -> inc_pos(acc, 0, -distance)
     end)
     |> List.delete_at(-1)
     |> Enum.reverse()
@@ -59,31 +54,20 @@ defmodule Advent2019.Day3.Part1 do
 
   @doc ~S"""
   ## Examples
-    iex> Advent2019.Day3.Part1.inc_pos_x([{0, 0}], 3)
+    iex> Advent2019.Day3.Part1.inc_pos([{0, 0}], 3, 0)
     [{3, 0}, {2, 0}, {1, 0}, {0, 0}]
+    iex> Advent2019.Day3.Part1.inc_pos([{0, 0}], 0, 3)
+    [{0, 3}, {0, 2}, {0, 1}, {0, 0}]
   """
-  def inc_pos_x(path = [{x, y} | _], distance) do
-    Enum.reduce(1..abs(distance), path, fn i, path ->
-      if distance > 0 do
-        [{x + i, y}] ++ path
-      else
-        [{x - i, y}] ++ path
-      end
+  def inc_pos(path = [{x, y} | _], dist_x, 0) do
+    Enum.reduce(1..abs(dist_x), path, fn i, path ->
+      [if(dist_x > 0, do: {x + i, y}, else: {x - i, y})] ++ path
     end)
   end
 
-  @doc ~S"""
-  ## Examples
-    iex> Advent2019.Day3.Part1.inc_pos_y([{0, 0}], 3)
-    [{0, 3}, {0, 2}, {0, 1}, {0, 0}]
-  """
-  def inc_pos_y(path = [{x, y} | _], distance) do
-    Enum.reduce(1..abs(distance), path, fn i, path ->
-      if distance > 0 do
-        [{x, y + i}] ++ path
-      else
-        [{x, y - i}] ++ path
-      end
+  def inc_pos(path = [{x, y} | _], 0, dist_y) do
+    Enum.reduce(1..abs(dist_y), path, fn i, path ->
+      [if(dist_y > 0, do: {x, y + i}, else: {x, y - i})] ++ path
     end)
   end
 

@@ -2,11 +2,7 @@ defmodule Advent2019.Day3.Part2 do
   alias Advent2019.Day3.Part1
 
   def run(file_path) do
-    [path1, path2] =
-      file_path
-      |> File.read!()
-      |> String.split("\n")
-
+    [path1, path2] = file_path |> File.read!() |> String.split()
     min_steps_to_intersection(path1, path2)
   end
 
