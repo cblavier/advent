@@ -1,5 +1,5 @@
-defmodule Advent2019.Day2.Part2 do
-  alias Advent2019.Day2.Part1
+defmodule Advent.Y2019.Day2.Part2 do
+  alias Advent.Y2019.Day2.Part1
 
   @max_noun 100
   @max_verb 100

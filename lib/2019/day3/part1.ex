@@ -1,4 +1,4 @@
-defmodule Advent2019.Day3.Part1 do
+defmodule Advent.Y2019.Day3.Part1 do
   def run(file_path) do
     [path1, path2] = file_path |> File.read!() |> String.split()
     distance_to_closest_intersection(path1, path2)
@@ -6,7 +6,7 @@ defmodule Advent2019.Day3.Part1 do
 
   @doc ~S"""
   ## Examples
-    iex> alias Advent2019.Day3.Part1
+    iex> alias Advent.Y2019.Day3.Part1
     iex> path1 = "R75,D30,R83,U83,L12,D49,R71,U7,L72"
     iex> path2 = "U62,R66,U55,R34,D71,R55,D58,R83"
     iex> Part1.distance_to_closest_intersection(path1, path2)
@@ -28,7 +28,7 @@ defmodule Advent2019.Day3.Part1 do
 
   @doc ~S"""
   ## Examples
-    iex> Advent2019.Day3.Part1.detailed_path("R2,U2,L1")
+    iex> Advent.Y2019.Day3.Part1.detailed_path("R2,U2,L1")
     [{1, 0}, {2, 0}, {2, 1}, {2, 2}, {1, 2}]
   """
   def detailed_path(path) when is_binary(path) do
@@ -54,9 +54,9 @@ defmodule Advent2019.Day3.Part1 do
 
   @doc ~S"""
   ## Examples
-    iex> Advent2019.Day3.Part1.inc_pos([{0, 0}], 3, 0)
+    iex> Advent.Y2019.Day3.Part1.inc_pos([{0, 0}], 3, 0)
     [{3, 0}, {2, 0}, {1, 0}, {0, 0}]
-    iex> Advent2019.Day3.Part1.inc_pos([{0, 0}], 0, 3)
+    iex> Advent.Y2019.Day3.Part1.inc_pos([{0, 0}], 0, 3)
     [{0, 3}, {0, 2}, {0, 1}, {0, 0}]
   """
   def inc_pos(path = [{x, y} | _], dist_x, 0) do

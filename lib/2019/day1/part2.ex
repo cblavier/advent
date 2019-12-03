@@ -1,5 +1,5 @@
-defmodule Advent2019.Day1.Part2 do
-  alias Advent2019.Day1.Part1
+defmodule Advent.Y2019.Day1.Part2 do
+  alias Advent.Y2019.Day1.Part1
 
   def run(path) do
     path
@@ -12,9 +12,9 @@ defmodule Advent2019.Day1.Part2 do
 
   @doc ~S"""
   ## Examples
-    iex> Advent2019.Day1.Part2.total_weight([1969])
+    iex> Advent.Y2019.Day1.Part2.total_weight([1969])
     966
-    iex> Advent2019.Day1.Part2.total_weight([100_756])
+    iex> Advent.Y2019.Day1.Part2.total_weight([100_756])
     50_346
   """
   def total_weight(weights) do

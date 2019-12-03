@@ -1,5 +1,5 @@
-defmodule Advent2019.Day3.Part2 do
-  alias Advent2019.Day3.Part1
+defmodule Advent.Y2019.Day3.Part2 do
+  alias Advent.Y2019.Day3.Part1
 
   def run(file_path) do
     [path1, path2] = file_path |> File.read!() |> String.split()
@@ -8,7 +8,7 @@ defmodule Advent2019.Day3.Part2 do
 
   @doc ~S"""
   ## Examples
-    iex> alias Advent2019.Day3.Part2
+    iex> alias Advent.Y2019.Day3.Part2
     iex> path1 = "R8,U5,L5,D3"
     iex> path2 = "U7,R6,D4,L4"
     iex> Part2.min_steps_to_intersection(path1, path2)

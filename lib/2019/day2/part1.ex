@@ -1,4 +1,4 @@
-defmodule Advent2019.Day2.Part1 do
+defmodule Advent.Y2019.Day2.Part1 do
   def run(path) do
     path
     |> File.read!()
@@ -17,7 +17,7 @@ defmodule Advent2019.Day2.Part1 do
 
   @doc ~S"""
   ## Examples
-    iex> alias Advent2019.Day2.Part1
+    iex> alias Advent.Y2019.Day2.Part1
     iex> Part1.run_code([1, 0, 0, 0, 99])
     [2, 0, 0, 0, 99]
     iex> Part1.run_code([2, 3, 0, 3, 99])
