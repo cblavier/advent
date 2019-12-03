@@ -16,8 +16,6 @@ defmodule Advent.Y2019.Day2.Part2 do
         throw({noun, verb})
       end
     end
-
-    :error
   catch
     {noun, verb} -> 100 * noun + verb
   end

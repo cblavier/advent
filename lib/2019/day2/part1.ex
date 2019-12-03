@@ -16,16 +16,15 @@ defmodule Advent.Y2019.Day2.Part1 do
   end
 
   @doc ~S"""
-  ## Examples
-    iex> alias Advent.Y2019.Day2.Part1
-    iex> Part1.run_code([1, 0, 0, 0, 99])
-    [2, 0, 0, 0, 99]
-    iex> Part1.run_code([2, 3, 0, 3, 99])
-    [2, 3, 0, 6, 99]
-    iex> Part1.run_code([2, 4, 4, 5, 99, 0])
-    [2, 4, 4, 5, 99, 9801]
-    iex> Part1.run_code([1, 1, 1, 4, 99, 5, 6, 0, 99])
-    [30, 1, 1, 4, 2, 5, 6, 0, 99]
+  iex> alias Advent.Y2019.Day2.Part1
+  iex> Part1.run_code([1, 0, 0, 0, 99])
+  [2, 0, 0, 0, 99]
+  iex> Part1.run_code([2, 3, 0, 3, 99])
+  [2, 3, 0, 6, 99]
+  iex> Part1.run_code([2, 4, 4, 5, 99, 0])
+  [2, 4, 4, 5, 99, 9801]
+  iex> Part1.run_code([1, 1, 1, 4, 99, 5, 6, 0, 99])
+  [30, 1, 1, 4, 2, 5, 6, 0, 99]
   """
   def run_code(opcodes, index \\ 0) do
     case Enum.slice(opcodes, index, 4) do

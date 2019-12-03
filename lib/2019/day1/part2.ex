@@ -11,11 +11,10 @@ defmodule Advent.Y2019.Day1.Part2 do
   end
 
   @doc ~S"""
-  ## Examples
-    iex> Advent.Y2019.Day1.Part2.total_weight([1969])
-    966
-    iex> Advent.Y2019.Day1.Part2.total_weight([100_756])
-    50_346
+  iex> Advent.Y2019.Day1.Part2.total_weight([1969])
+  966
+  iex> Advent.Y2019.Day1.Part2.total_weight([100_756])
+  50_346
   """
   def total_weight(weights) do
     added_weight = weights |> hd |> Part1.fuel()

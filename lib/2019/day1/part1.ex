@@ -9,11 +9,10 @@ defmodule Advent.Y2019.Day1.Part1 do
   end
 
   @doc ~S"""
-  ## Examples
-    iex> Advent.Y2019.Day1.Part1.fuel(10)
-    1
-    iex> Advent.Y2019.Day1.Part1.fuel(1969)
-    654
+  iex> Advent.Y2019.Day1.Part1.fuel(10)
+  1
+  iex> Advent.Y2019.Day1.Part1.fuel(1969)
+  654
   """
   def fuel(weight), do: div(weight, 3) - 2
 end
