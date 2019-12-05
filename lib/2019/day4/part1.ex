@@ -2,21 +2,22 @@ defmodule Advent.Y2019.Day4.Part1 do
   @digit_count 6
 
   def run(min, max) do
-    produce_codes()
-    |> Stream.filter(&in_range?(&1, min, max))
-    |> Stream.filter(&has_two_consecutive_digits?/1)
-    |> Enum.count()
+    for code <- produce_codes(),
+        (&in_range?(&1, min, max)).(code),
+        (&has_two_consecutive_digits?/1).(code) do
+      Enum.count(code)
+    end
   end
 
-  def produce_codes(range \\ 0..9, depth \\ 0, max_depth \\ @digit_count) do
-    Enum.flat_map(range, fn i ->
-      if depth + 1 < max_depth do
-        0..i
-        |> produce_codes(depth + 1, max_depth)
-        |> Enum.map(&(i + &1 * 10))
-      else
-        [i]
-      end
+  def produce_codes(range \\ 0..9, depth \\ 0, max_depth \\ @digit_count)
+
+  def produce_codes(range, depth, max_depth) when depth + 1 < max_depth, do: Enum.map(range, & &1)
+
+  def produce_codes(range, depth, max_depth) do
+    Enum.map(range, fn i ->
+      0..i
+      |> produce_codes(depth + 1, max_depth)
+      |> Enum.map(&(i + &1 * 10))
     end)
   end
 
@@ -35,8 +36,7 @@ defmodule Advent.Y2019.Day4.Part1 do
   """
   def has_two_consecutive_digits?(code) do
     code
-    |> to_string()
-    |> String.graphemes()
+    |> Integer.digits()
     |> Enum.chunk_every(2, 1, :discard)
     |> Enum.any?(fn [c1, c2] -> c1 == c2 end)
   end

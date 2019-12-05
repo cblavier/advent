@@ -19,15 +19,10 @@ defmodule Advent.Y2019.Day4.Part2 do
   """
   def has_exactly_two_consecutive_digits?(code) do
     code
-    |> to_string()
-    |> String.graphemes()
+    |> Integer.digits()
     |> Enum.chunk_every(2, 1, :discard)
     |> Enum.reduce(%{}, fn [c1, c2], acc ->
-      if c1 == c2 do
-        Map.update(acc, c1, 1, &(&1 + 1))
-      else
-        acc
-      end
+      if c1 == c2, do: Map.update(acc, c1, 1, &(&1 + 1)), else: acc
     end)
     |> Map.values()
     |> Enum.member?(1)
