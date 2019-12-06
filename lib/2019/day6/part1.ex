@@ -9,13 +9,18 @@ defmodule Advent.Y2019.Day6.Part1 do
   42
   """
   def compute_orbits(orbits) do
+    orbits
+    |> parse_orbits()
+    |> count_all_orbits()
+  end
+
+  def parse_orbits(orbits) do
     for(
       orbit <- orbits,
       [planet1, planet2] = String.split(orbit, ")"),
       into: %{},
       do: {planet2, planet1}
     )
-    |> count_all_orbits()
   end
 
   defp count_all_orbits(orbits) do
