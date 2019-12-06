@@ -13,8 +13,8 @@ defmodule Advent.Y2019.Day6.Part2 do
   """
   def shortest_path(orbits, edge1, edge2) do
     orbits = Part1.parse_orbits(orbits)
-    edge1_path = orbits_path(orbits, edge1)
-    edge2_path = orbits_path(orbits, edge2)
+    edge1_path = Part1.orbits_path(orbits, edge1)
+    edge2_path = Part1.orbits_path(orbits, edge2)
     intersection = edge1_path -- edge1_path -- edge2_path
 
     for(
@@ -25,12 +25,5 @@ defmodule Advent.Y2019.Day6.Part2 do
       do: distance
     )
     |> Enum.min()
-  end
-
-  defp orbits_path(orbits, planet, path \\ []) do
-    case Map.get(orbits, planet) do
-      nil -> path
-      orbited -> orbits_path(orbits, orbited, path ++ [orbited])
-    end
   end
 end

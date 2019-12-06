@@ -26,14 +26,14 @@ defmodule Advent.Y2019.Day6.Part1 do
   defp count_all_orbits(orbits) do
     orbits
     |> Map.keys()
-    |> Enum.map(&count_orbits(orbits, &1))
+    |> Enum.map(&(orbits |> orbits_path(&1) |> length))
     |> Enum.sum()
   end
 
-  defp count_orbits(orbits, planet, count \\ 0) do
+  def orbits_path(orbits, planet, path \\ []) do
     case Map.get(orbits, planet) do
-      nil -> count
-      orbited -> count_orbits(orbits, orbited, count + 1)
+      nil -> path
+      orbited -> orbits_path(orbits, orbited, path ++ [orbited])
     end
   end
 end
