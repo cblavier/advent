@@ -2,28 +2,29 @@ defmodule Advent.Y2019.Day4.Part1 do
   @digit_count 6
 
   def run(min, max) do
-    for code <- produce_codes(),
-        (&in_range?(&1, min, max)).(code),
-        (&has_two_consecutive_digits?/1).(code) do
-      Enum.count(code)
-    end
+    codes =
+      for code <- produce_codes(),
+          in_range?(code, min, max),
+          has_two_consecutive_digits?(code) do
+        code
+      end
+
+    length(codes)
   end
 
   def produce_codes(range \\ 0..9, depth \\ 0, max_depth \\ @digit_count)
 
-  def produce_codes(range, depth, max_depth) when depth + 1 < max_depth, do: Enum.map(range, & &1)
-
-  def produce_codes(range, depth, max_depth) do
-    Enum.map(range, fn i ->
+  def produce_codes(range, depth, max_depth) when depth + 1 < max_depth do
+    Enum.flat_map(range, fn i ->
       0..i
       |> produce_codes(depth + 1, max_depth)
       |> Enum.map(&(i + &1 * 10))
     end)
   end
 
-  def in_range?(code, min, max) do
-    code >= min && code <= max
-  end
+  def produce_codes(range, _depth, _max_depth), do: range
+
+  def in_range?(code, min, max), do: code >= min && code <= max
 
   @doc ~S"""
   iex> alias Advent.Y2019.Day4.Part1

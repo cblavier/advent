@@ -2,10 +2,14 @@ defmodule Advent.Y2019.Day4.Part2 do
   alias Advent.Y2019.Day4.Part1
 
   def run(min, max) do
-    Part1.produce_codes()
-    |> Stream.filter(&Part1.in_range?(&1, min, max))
-    |> Stream.filter(&has_exactly_two_consecutive_digits?/1)
-    |> Enum.count()
+    codes =
+      for code <- Part1.produce_codes(),
+          Part1.in_range?(code, min, max),
+          has_exactly_two_consecutive_digits?(code) do
+        code
+      end
+
+    length(codes)
   end
 
   @doc ~S"""
