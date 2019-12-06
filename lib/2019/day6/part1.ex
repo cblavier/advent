@@ -1,14 +1,14 @@
 defmodule Advent.Y2019.Day6.Part1 do
   def run(path) do
-    path |> File.read!() |> String.split() |> compute_orbits()
+    path |> File.read!() |> String.split() |> cumulated_path_length()
   end
 
   @doc ~S"""
   iex> orbits = ["COM)B", "B)C", "C)D", "E)F", "D)E", "B)G", "G)H", "D)I", "E)J", "J)K", "K)L"]
-  iex> Advent.Y2019.Day6.Part1.compute_orbits(orbits)
+  iex> Advent.Y2019.Day6.Part1.cumulated_path_length(orbits)
   42
   """
-  def compute_orbits(orbits) do
+  def cumulated_path_length(orbits) do
     orbits
     |> parse_orbits()
     |> count_all_orbits()
