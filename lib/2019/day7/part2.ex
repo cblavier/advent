@@ -3,23 +3,23 @@ defmodule Advent.Y2019.Day7.Part2 do
   alias Advent.Y2019.Day7.Part1
 
   def run(puzzle) do
-    puzzle |> String.split(",") |> compute()
+    puzzle |> String.split(",") |> max_thrust()
   end
 
   @doc ~S"""
   iex> alias Advent.Y2019.Day7.Part2
   iex> program = ~w(3 26 1001 26 -4 26 3 27 1002 27 2 27 1 27 26)
   iex> program = program ++ ~w(27 4 27 1001 28 -1 28 1005 28 6 99 0 0 5)
-  iex> Part2.compute(program)
+  iex> Part2.max_thrust(program)
   139_629_729
   iex> program = ~w(3 52 1001 52 -5 52 3 53 1 52 56 54 1007 54 5 55)
   iex> program = program ++ ~w(1005 55 26 1001 54 -5 54 1105 1 12 1)
   iex> program = program ++ ~w(53 54 53 1008 54 0 55 1001 55 1 55 2)
   iex> program = program ++ ~w(53 55 53 4 53 1001 56 -1 56 1005 56 6 99 0 0 0 0 10)
-  iex> Part2.compute(program)
+  iex> Part2.max_thrust(program)
   18_216
   """
-  def compute(program, input \\ 0) do
+  def max_thrust(program, input \\ 0) do
     for signals <- Part1.permutations(~w(5 6 7 8 9)) do
       Task.async(fn ->
         run_amplifiers(program, signals, input)
@@ -31,7 +31,11 @@ defmodule Advent.Y2019.Day7.Part2 do
 
   def run_amplifiers(program, signals, input) do
     signals
-    |> Enum.map(&amplifier_process(program, &1, self()))
+    |> Enum.with_index()
+    |> Enum.map(fn {signal, index} ->
+      last = index == length(signals) - 1
+      amplifier_process(program, signal, self(), last)
+    end)
     |> connect_amplifiers()
     |> Enum.at(0)
     |> send({:input, input})
@@ -41,12 +45,12 @@ defmodule Advent.Y2019.Day7.Part2 do
     end
   end
 
-  def amplifier_process(program, signal, parent_pid) do
+  def amplifier_process(program, signal, parent_pid, last) do
     spawn(fn ->
       receive do
         {:connect, output_pid} ->
           output = run_program(program, [signal], output_pid)
-          send(parent_pid, {:output, output})
+          if last, do: send(parent_pid, {:output, output})
       end
     end)
   end
@@ -60,24 +64,19 @@ defmodule Advent.Y2019.Day7.Part2 do
     end
   end
 
-  def run_program(program, inputs, output_pid, pos \\ 0, output \\ nil) do
-    case program |> Enum.slice(pos, 4) |> Computer.read_instruction(program, pos, inputs) do
+  def run_program(prog, inputs, output_pid, pos \\ 0, output \\ nil) do
+    case prog |> Enum.slice(pos, 4) |> Computer.read_instruction(prog, pos, inputs) do
       :halt ->
-        receive do
-          {:input, input} -> input
-        end
+        output
 
       :waiting_input ->
         receive do
-          {:input, input} -> run_program(program, [input], output_pid, pos, output)
+          {:input, input} -> run_program(prog, [input], output_pid, pos, output)
         end
 
-      {program, new_pos, nil, new_inputs} ->
-        run_program(program, new_inputs, output_pid, new_pos, nil)
-
-      {program, new_pos, output, new_inputs} ->
-        send(output_pid, {:input, output})
-        run_program(program, new_inputs, output_pid, new_pos, output)
+      {program, new_pos, new_output, new_inputs} ->
+        if new_output, do: send(output_pid, {:input, new_output})
+        run_program(program, new_inputs, output_pid, new_pos, new_output || output)
     end
   end
 end
