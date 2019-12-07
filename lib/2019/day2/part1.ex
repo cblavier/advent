@@ -1,7 +1,6 @@
 defmodule Advent.Y2019.Day2.Part1 do
-  def run(path) do
-    path
-    |> File.read!()
+  def run(puzzle) do
+    puzzle
     |> String.split(",")
     |> Enum.map(&String.to_integer/1)
     |> run_code_with_state({12, 2})

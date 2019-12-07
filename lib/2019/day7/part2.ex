@@ -2,8 +2,8 @@ defmodule Advent.Y2019.Day7.Part2 do
   alias Advent.Y2019.Day5, as: Computer
   alias Advent.Y2019.Day7.Part1
 
-  def run(path) do
-    path |> File.read!() |> String.split(",") |> compute()
+  def run(puzzle) do
+    puzzle |> String.split(",") |> compute()
   end
 
   @doc ~S"""

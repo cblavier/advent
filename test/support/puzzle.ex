@@ -1,5 +1,7 @@
 defmodule Advent.Puzzle do
-  def path(year, day, name \\ "puzzle.txt") do
-    Path.expand("../fixtures/#{year}/day#{day}/#{name}", __DIR__)
+  def load(year, day, name \\ "puzzle.txt") do
+    "../fixtures/#{year}/day#{day}/#{name}"
+    |> Path.expand(__DIR__)
+    |> File.read!()
   end
 end

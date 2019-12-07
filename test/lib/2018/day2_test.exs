@@ -5,13 +5,13 @@ defmodule Advent.Y2018.Day2Test do
 
   alias Advent.Y2018.Day2.{Part1, Part2}
 
-  @puzzle_path Advent.Puzzle.path(2018, 2)
+  @puzzle Advent.Puzzle.load(2018, 2)
 
   test "run part1 puzzle" do
-    assert Part1.run(@puzzle_path) == 7_163
+    assert Part1.run(@puzzle) == 7_163
   end
 
   test "run part2 puzzle" do
-    assert Part2.run(@puzzle_path) == "ighfbyijnoumxjlxevacpwqtr"
+    assert Part2.run(@puzzle) == "ighfbyijnoumxjlxevacpwqtr"
   end
 end

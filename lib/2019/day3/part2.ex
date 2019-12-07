@@ -1,8 +1,8 @@
 defmodule Advent.Y2019.Day3.Part2 do
   alias Advent.Y2019.Day3.Part1
 
-  def run(file_path) do
-    [path1, path2] = file_path |> File.read!() |> String.split()
+  def run(puzzle) do
+    [path1, path2] = String.split(puzzle)
     min_steps_to_intersection(path1, path2)
   end
 

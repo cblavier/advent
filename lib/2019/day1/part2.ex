@@ -1,9 +1,8 @@
 defmodule Advent.Y2019.Day1.Part2 do
   alias Advent.Y2019.Day1.Part1
 
-  def run(path) do
-    path
-    |> File.read!()
+  def run(puzzle) do
+    puzzle
     |> String.split("\n")
     |> Enum.map(&String.to_integer/1)
     |> Enum.map(&total_weight([&1]))

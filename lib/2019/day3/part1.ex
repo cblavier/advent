@@ -1,6 +1,6 @@
 defmodule Advent.Y2019.Day3.Part1 do
-  def run(file_path) do
-    [path1, path2] = file_path |> File.read!() |> String.split()
+  def run(puzzle) do
+    [path1, path2] = String.split(puzzle)
     distance_to_closest_intersection(path1, path2)
   end
 

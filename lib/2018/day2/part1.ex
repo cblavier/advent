@@ -1,7 +1,6 @@
 defmodule Advent.Y2018.Day2.Part1 do
-  def run(path) do
-    path
-    |> File.read!()
+  def run(puzzle) do
+    puzzle
     |> String.split()
     |> checksum()
   end

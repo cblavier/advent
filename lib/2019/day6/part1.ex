@@ -1,6 +1,6 @@
 defmodule Advent.Y2019.Day6.Part1 do
-  def run(path) do
-    path |> File.read!() |> String.split() |> cumulated_path_length()
+  def run(puzzle) do
+    puzzle |> String.split() |> cumulated_path_length()
   end
 
   @doc ~S"""

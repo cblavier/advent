@@ -1,8 +1,8 @@
 defmodule Advent.Y2019.Day6.Part2 do
   alias Advent.Y2019.Day6.Part1
 
-  def run(path) do
-    path |> File.read!() |> String.split() |> shortest_path("YOU", "SAN")
+  def run(puzzle) do
+    puzzle |> String.split() |> shortest_path("YOU", "SAN")
   end
 
   @doc ~S"""

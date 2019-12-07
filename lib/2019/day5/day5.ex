@@ -1,6 +1,6 @@
 defmodule Advent.Y2019.Day5 do
-  def run(path, input) do
-    path |> File.read!() |> String.split(",") |> run_program(input)
+  def run(puzzle, input) do
+    puzzle |> String.split(",") |> run_program(input)
   end
 
   @doc ~S"""
