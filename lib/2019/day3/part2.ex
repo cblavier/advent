@@ -26,12 +26,21 @@ defmodule Advent.Y2019.Day3.Part2 do
     path2 = Part1.detailed_path(path2)
     intersections = path1 -- path1 -- path2
 
+    path1_indices = index_map(path1)
+    path2_indices = index_map(path2)
+
     intersections
     |> Enum.map(fn intersection ->
-      index1 = Enum.find_index(path1, &(&1 == intersection))
-      index2 = Enum.find_index(path2, &(&1 == intersection))
+      index1 = Map.get(path1_indices, intersection)
+      index2 = Map.get(path2_indices, intersection)
       2 + index1 + index2
     end)
     |> Enum.min()
+  end
+
+  defp index_map(path) do
+    for {item, index} <- Enum.with_index(path),
+        into: %{},
+        do: {item, index}
   end
 end
