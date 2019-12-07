@@ -64,19 +64,25 @@ defmodule Advent.Y2019.Day7.Part2 do
     end
   end
 
-  defp run_program(prog, inputs, output_pid, pos \\ 0, output \\ nil) do
-    case prog |> Enum.slice(pos, 4) |> Computer.read_instruction(prog, pos, inputs) do
+  defp run_program(program, inputs, output_pid, pos \\ 0, output \\ nil) do
+    case read_next_instruction(program, pos, inputs) do
       :halt ->
         output
 
       :waiting_input ->
         receive do
-          {:input, input} -> run_program(prog, [input], output_pid, pos, output)
+          {:input, input} -> run_program(program, [input], output_pid, pos, output)
         end
 
       {program, new_pos, new_output, new_inputs} ->
         if new_output, do: send(output_pid, {:input, new_output})
         run_program(program, new_inputs, output_pid, new_pos, new_output || output)
     end
+  end
+
+  defp read_next_instruction(program, pos, inputs) do
+    program
+    |> Enum.slice(pos, 4)
+    |> Computer.read_instruction(program, pos, inputs)
   end
 end
