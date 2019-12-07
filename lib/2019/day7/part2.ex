@@ -29,7 +29,7 @@ defmodule Advent.Y2019.Day7.Part2 do
     |> Enum.max()
   end
 
-  def run_amplifiers(program, signals, input) do
+  defp run_amplifiers(program, signals, input) do
     signals
     |> Enum.with_index()
     |> Enum.map(fn {signal, index} ->
@@ -45,7 +45,7 @@ defmodule Advent.Y2019.Day7.Part2 do
     end
   end
 
-  def amplifier_process(program, signal, parent_pid, last) do
+  defp amplifier_process(program, signal, parent_pid, last) do
     spawn(fn ->
       receive do
         {:connect, output_pid} ->
@@ -55,7 +55,7 @@ defmodule Advent.Y2019.Day7.Part2 do
     end)
   end
 
-  def connect_amplifiers(amplifiers) do
+  defp connect_amplifiers(amplifiers) do
     for {amplifier, i} <- Enum.with_index(amplifiers) do
       output_index = rem(i + 1, length(amplifiers))
       output_amplifier = Enum.at(amplifiers, output_index)
@@ -64,7 +64,7 @@ defmodule Advent.Y2019.Day7.Part2 do
     end
   end
 
-  def run_program(prog, inputs, output_pid, pos \\ 0, output \\ nil) do
+  defp run_program(prog, inputs, output_pid, pos \\ 0, output \\ nil) do
     case prog |> Enum.slice(pos, 4) |> Computer.read_instruction(prog, pos, inputs) do
       :halt ->
         output
