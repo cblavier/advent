@@ -15,18 +15,7 @@ defmodule Advent.Y2019.Day8.Part2 do
     |> merge_layers(image_width * image_height)
   end
 
-  def print_image(image, width) do
-    image
-    |> Enum.map(fn
-      "0" -> " "
-      color -> color
-    end)
-    |> Enum.chunk_every(width)
-    |> Enum.join("\n")
-    |> IO.puts()
-  end
-
-  defp merge_layers(layers, image_size) do
+  def merge_layers(layers, image_size) do
     transparent_layer = List.duplicate(@transparent, image_size)
 
     layers
@@ -39,5 +28,16 @@ defmodule Advent.Y2019.Day8.Part2 do
         {_, layer_color} -> layer_color
       end)
     end)
+  end
+
+  def print_image(image, width) do
+    image
+    |> Enum.map(fn
+      "0" -> " "
+      color -> color
+    end)
+    |> Enum.chunk_every(width)
+    |> Enum.join("\n")
+    |> IO.puts()
   end
 end
