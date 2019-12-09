@@ -2,23 +2,23 @@ defmodule Advent.Y2019.Day7.Part2 do
   alias Advent.Y2019.Day5, as: Computer
   alias Advent.Y2019.Day7.Part1
 
-  def run(puzzle) do
-    puzzle |> String.split(",") |> Enum.map(&String.to_integer/1) |> max_thrust()
-  end
-
   @doc ~S"""
   iex> alias Advent.Y2019.Day7.Part2
-  iex> program = [3,26,1001,26,-4,26,3,27,1002,27,2,27,1,27,26]
-  iex> program = program ++ [27,4,27,1001,28,-1,28,1005,28,6,99,0,0,5]
-  iex> Part2.max_thrust(program)
+  iex> program = "3,26,1001,26,-4,26,3,27,1002,27,2,27,1,27,26,"
+  iex> program = program <> "27,4,27,1001,28,-1,28,1005,28,6,99,0,0,5"
+  iex> Part2.run(program)
   139_629_729
-  iex> program = [3,52,1001,52,-5,52,3,53,1,52,56,54,1007,54,5,55]
-  iex> program = program ++ [1005,55,26,1001,54,-5,54,1105,1,12,1]
-  iex> program = program ++ [53,54,53,1008,54,0,55,1001,55,1,55,2]
-  iex> program = program ++ [53,55,53,4,53,1001,56,-1,56,1005,56,6,99,0,0,0,0,10]
-  iex> Part2.max_thrust(program)
+  iex> program = "3,52,1001,52,-5,52,3,53,1,52,56,54,1007,54,5,55,"
+  iex> program = program <> "1005,55,26,1001,54,-5,54,1105,1,12,1,"
+  iex> program = program <> "53,54,53,1008,54,0,55,1001,55,1,55,2,"
+  iex> program = program <> "53,55,53,4,53,1001,56,-1,56,1005,56,6,99,0,0,0,0,10"
+  iex> Part2.run(program)
   18_216
   """
+  def run(puzzle) do
+    puzzle |> Computer.parse_program() |> max_thrust()
+  end
+
   def max_thrust(program, input \\ 0) do
     for signals <- Part1.permutations([5, 6, 7, 8, 9]) do
       Task.async(fn ->
@@ -80,9 +80,11 @@ defmodule Advent.Y2019.Day7.Part2 do
     end
   end
 
-  defp read_next_instruction(program, positions = {absolute, _rel}, inputs) do
+  defp read_next_instruction(program, positions = {abs, _rel}, inputs) do
     program
-    |> Enum.slice(absolute, 4)
+    |> Map.take(abs..(abs + 3))
+    |> Enum.sort()
+    |> Enum.map(&elem(&1, 1))
     |> Computer.read_instruction(positions, program, inputs)
   end
 end

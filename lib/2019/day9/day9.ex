@@ -12,8 +12,7 @@ defmodule Advent.Y2019.Day9 do
   """
   def run(puzzle, input) do
     puzzle
-    |> String.split(",")
-    |> Enum.map(&String.to_integer/1)
+    |> Computer.parse_program()
     |> Computer.run_program([input])
   end
 end
