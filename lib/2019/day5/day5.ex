@@ -31,64 +31,69 @@ defmodule Advent.Y2019.Day5 do
   end
 
   def read_instruction([instruction | params], prog, pos, inputs) do
-    params = Enum.map(params, &String.to_integer/1)
-
-    case {String.pad_leading(instruction, 5, "0"), params} do
-      {<<_, p2_mode, p1_mode, "01">>, [p1, p2, p3]} ->
-        p1 = param(<<p1_mode>>, prog, p1)
-        p2 = param(<<p2_mode>>, prog, p2)
-        new_pos = if p3 == pos, do: pos, else: pos + 4
-        {List.replace_at(prog, p3, to_string(p1 + p2)), new_pos, nil, inputs}
-
-      {<<_, p2_mode, p1_mode, "02">>, [p1, p2, p3]} ->
-        p1 = param(<<p1_mode>>, prog, p1)
-        p2 = param(<<p2_mode>>, prog, p2)
-        new_pos = if p3 == pos, do: pos, else: pos + 4
-        {List.replace_at(prog, p3, to_string(p1 * p2)), new_pos, nil, inputs}
-
-      {<<_, _, _, "03">>, [p1 | _]} ->
-        case inputs do
-          [] ->
-            :waiting_input
-
-          [input | inputs] ->
-            input = to_string(input)
-            new_pos = if p1 == pos, do: pos, else: pos + 2
-            {List.replace_at(prog, p1, input), new_pos, nil, inputs}
-        end
-
-      {<<_, _, p1_mode, "04">>, [p1 | _]} ->
-        p1 = param(<<p1_mode>>, prog, p1)
-        {prog, pos + 2, p1, inputs}
-
-      {<<_, p2_mode, p1_mode, "05">>, [p1, p2 | _]} ->
-        p1 = param(<<p1_mode>>, prog, p1)
-        p2 = param(<<p2_mode>>, prog, p2)
-        if p1 != 0, do: {prog, p2, nil, inputs}, else: {prog, pos + 3, nil, inputs}
-
-      {<<_, p2_mode, p1_mode, "06">>, [p1, p2 | _]} ->
-        p1 = param(<<p1_mode>>, prog, p1)
-        p2 = param(<<p2_mode>>, prog, p2)
-        if p1 == 0, do: {prog, p2, nil, inputs}, else: {prog, pos + 3, nil, inputs}
-
-      {<<_, p2_mode, p1_mode, "07">>, [p1, p2, p3 | _]} ->
-        p1 = param(<<p1_mode>>, prog, p1)
-        p2 = param(<<p2_mode>>, prog, p2)
-        value = if p1 < p2, do: "1", else: "0"
-        new_pos = if p3 == pos, do: pos, else: pos + 4
-        {List.replace_at(prog, p3, value), new_pos, nil, inputs}
-
-      {<<_, p2_mode, p1_mode, "08">>, [p1, p2, p3 | _]} ->
-        p1 = param(<<p1_mode>>, prog, p1)
-        p2 = param(<<p2_mode>>, prog, p2)
-        value = if p1 == p2, do: "1", else: "0"
-        new_pos = if p3 == pos, do: pos, else: pos + 4
-        {List.replace_at(prog, p3, value), new_pos, nil, inputs}
-
-      {<<_, _, _, "99">>, _} ->
-        :halt
-    end
+    instruction
+    |> String.pad_leading(5, "0")
+    |> run_instruction(Enum.map(params, &String.to_integer/1), pos, prog, inputs)
   end
+
+  # Add instruction
+  def run_instruction(<<_, p2_mode, p1_mode, "01">>, [p1, p2, p3], pos, prog, inputs) do
+    p1 = param(<<p1_mode>>, prog, p1)
+    p2 = param(<<p2_mode>>, prog, p2)
+    {List.replace_at(prog, p3, to_string(p1 + p2)), pos + 4, nil, inputs}
+  end
+
+  # Multiply instruction
+  def run_instruction(<<_, p2_mode, p1_mode, "02">>, [p1, p2, p3], pos, prog, inputs) do
+    p1 = param(<<p1_mode>>, prog, p1)
+    p2 = param(<<p2_mode>>, prog, p2)
+    {List.replace_at(prog, p3, to_string(p1 * p2)), pos + 4, nil, inputs}
+  end
+
+  # Input instruction
+  def run_instruction(<<_, _, _, "03">>, _params, _pos, _prog, []), do: :waiting_input
+
+  def run_instruction(<<_, _, _, "03">>, [p1 | _], pos, prog, [input | inputs]) do
+    {List.replace_at(prog, p1, to_string(input)), pos + 2, nil, inputs}
+  end
+
+  # Output instruction
+  def run_instruction(<<_, _, p1_mode, "04">>, [p1 | _], pos, prog, inputs) do
+    p1 = param(<<p1_mode>>, prog, p1)
+    {prog, pos + 2, p1, inputs}
+  end
+
+  # Test != 0
+  def run_instruction(<<_, p2_mode, p1_mode, "05">>, [p1, p2 | _], pos, prog, inputs) do
+    p1 = param(<<p1_mode>>, prog, p1)
+    p2 = param(<<p2_mode>>, prog, p2)
+    if p1 != 0, do: {prog, p2, nil, inputs}, else: {prog, pos + 3, nil, inputs}
+  end
+
+  # Test == 0
+  def run_instruction(<<_, p2_mode, p1_mode, "06">>, [p1, p2 | _], pos, prog, inputs) do
+    p1 = param(<<p1_mode>>, prog, p1)
+    p2 = param(<<p2_mode>>, prog, p2)
+    if p1 == 0, do: {prog, p2, nil, inputs}, else: {prog, pos + 3, nil, inputs}
+  end
+
+  # Test <
+  def run_instruction(<<_, p2_mode, p1_mode, "07">>, [p1, p2, p3 | _], pos, prog, inputs) do
+    p1 = param(<<p1_mode>>, prog, p1)
+    p2 = param(<<p2_mode>>, prog, p2)
+    value = if p1 < p2, do: "1", else: "0"
+    {List.replace_at(prog, p3, value), pos + 4, nil, inputs}
+  end
+
+  # Test ==
+  def run_instruction(<<_, p2_mode, p1_mode, "08">>, [p1, p2, p3 | _], pos, prog, inputs) do
+    p1 = param(<<p1_mode>>, prog, p1)
+    p2 = param(<<p2_mode>>, prog, p2)
+    value = if p1 == p2, do: "1", else: "0"
+    {List.replace_at(prog, p3, value), pos + 4, nil, inputs}
+  end
+
+  def run_instruction(<<_, _, _, "99">>, _, _, _, _), do: :halt
 
   @doc ~S"""
   iex> alias Advent.Y2019.Day5
