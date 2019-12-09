@@ -6,102 +6,134 @@ defmodule Advent.Y2019.Day5 do
   @doc ~S"""
   iex> alias Advent.Y2019.Day5
   iex> Day5.run_program(["1002","4","3","4","33"], ["0"])
-  nil
+  []
   iex> program = String.split("3,9,8,9,10,9,4,9,99,-1,8", ",")
   iex> {Day5.run_program(program, ["8"]), Day5.run_program(program, ["3"]) }
-  {1, 0}
+  {[1], [0]}
   iex> program = String.split("3,9,7,9,10,9,4,9,99,-1,8", ",")
   iex> {Day5.run_program(program, ["3"]), Day5.run_program(program, ["10"])}
-  {1, 0}
+  {[1], [0]}
   iex> program = String.split("3,3,1108,-1,8,3,4,3,99", ",")
   iex> {Day5.run_program(program, ["8"]), Day5.run_program(program, ["3"])}
-  {1, 0}
+  {[1], [0]}
   iex> program = String.split("3,3,1107,-1,8,3,4,3,99", ",")
   iex> {Day5.run_program(program, ["3"]), Day5.run_program(program, ["10"])}
-  {1, 0}
+  {[1], [0]}
   iex> program = String.split("3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9", ",")
   iex> {Day5.run_program(program, ["10"]), Day5.run_program(program, ["0"])}
-  {1, 0}
+  {[1], [0]}
   """
-  def run_program(program, inputs, pos \\ 0, output \\ nil) do
-    case program |> Enum.slice(pos, 4) |> read_instruction(program, pos, inputs) do
-      {program, new_pos, output, new_inputs} -> run_program(program, new_inputs, new_pos, output)
-      :halt -> output
+  def run_program(program, inputs, positions = {absolute, _rel} \\ {0, 0}, outputs \\ []) do
+    case program |> Enum.slice(absolute, 4) |> read_instruction(program, positions, inputs) do
+      {program, positions, nil, inputs} ->
+        run_program(program, inputs, positions, outputs)
+
+      {program, positions, output, inputs} ->
+        run_program(program, inputs, positions, outputs ++ [output])
+
+      :halt ->
+        outputs
     end
   end
 
-  def read_instruction([instruction | params], prog, pos, inputs) do
+  def read_instruction([instruction | params], prog, positions, inputs) do
     instruction
     |> String.pad_leading(5, "0")
-    |> run_instruction(Enum.map(params, &String.to_integer/1), pos, prog, inputs)
+    |> run_instruction(Enum.map(params, &String.to_integer/1), positions, prog, inputs)
   end
 
   # Add instruction
-  def run_instruction(<<_, p2_mode, p1_mode, "01">>, [p1, p2, p3], pos, prog, inputs) do
-    p1 = param(<<p1_mode>>, prog, p1)
-    p2 = param(<<p2_mode>>, prog, p2)
-    {List.replace_at(prog, p3, to_string(p1 + p2)), pos + 4, nil, inputs}
+  def run_instruction(<<p3_m, p2_m, p1_m, "01">>, [p1, p2, p3], {absolute, rel}, prog, inputs) do
+    p1 = param(<<p1_m>>, prog, p1, rel)
+    p2 = param(<<p2_m>>, prog, p2, rel)
+    p3 = out_position(<<p3_m>>, p3, rel)
+    {write_memory(prog, p3, to_string(p1 + p2)), {absolute + 4, rel}, nil, inputs}
   end
 
   # Multiply instruction
-  def run_instruction(<<_, p2_mode, p1_mode, "02">>, [p1, p2, p3], pos, prog, inputs) do
-    p1 = param(<<p1_mode>>, prog, p1)
-    p2 = param(<<p2_mode>>, prog, p2)
-    {List.replace_at(prog, p3, to_string(p1 * p2)), pos + 4, nil, inputs}
+  def run_instruction(<<p3_m, p2_m, p1_m, "02">>, [p1, p2, p3], {absolute, rel}, prog, inputs) do
+    p1 = param(<<p1_m>>, prog, p1, rel)
+    p2 = param(<<p2_m>>, prog, p2, rel)
+    p3 = out_position(<<p3_m>>, p3, rel)
+    {write_memory(prog, p3, to_string(p1 * p2)), {absolute + 4, rel}, nil, inputs}
   end
 
   # Input instruction
-  def run_instruction(<<_, _, _, "03">>, _params, _pos, _prog, []), do: :waiting_input
+  def run_instruction(<<_, _, _, "03">>, _params, _positions, _prog, []), do: :waiting_input
 
-  def run_instruction(<<_, _, _, "03">>, [p1 | _], pos, prog, [input | inputs]) do
-    {List.replace_at(prog, p1, to_string(input)), pos + 2, nil, inputs}
+  def run_instruction(<<_, _, p1_m, "03">>, [p1 | _], {absolute, rel}, prog, [input | inputs]) do
+    p1 = out_position(<<p1_m>>, p1, rel)
+    {write_memory(prog, p1, to_string(input)), {absolute + 2, rel}, nil, inputs}
   end
 
   # Output instruction
-  def run_instruction(<<_, _, p1_mode, "04">>, [p1 | _], pos, prog, inputs) do
-    p1 = param(<<p1_mode>>, prog, p1)
-    {prog, pos + 2, p1, inputs}
+  def run_instruction(<<_, _, p1_mode, "04">>, [p1 | _], {absolute, rel}, prog, inputs) do
+    p1 = param(<<p1_mode>>, prog, p1, rel)
+    {prog, {absolute + 2, rel}, p1, inputs}
   end
 
   # Test != 0
-  def run_instruction(<<_, p2_mode, p1_mode, "05">>, [p1, p2 | _], pos, prog, inputs) do
-    p1 = param(<<p1_mode>>, prog, p1)
-    p2 = param(<<p2_mode>>, prog, p2)
-    if p1 != 0, do: {prog, p2, nil, inputs}, else: {prog, pos + 3, nil, inputs}
+  def run_instruction(<<_, p2_mode, p1_mode, "05">>, [p1, p2 | _], {absolute, rel}, prog, inputs) do
+    p1 = param(<<p1_mode>>, prog, p1, rel)
+    p2 = param(<<p2_mode>>, prog, p2, rel)
+    if p1 != 0, do: {prog, {p2, rel}, nil, inputs}, else: {prog, {absolute + 3, rel}, nil, inputs}
   end
 
   # Test == 0
-  def run_instruction(<<_, p2_mode, p1_mode, "06">>, [p1, p2 | _], pos, prog, inputs) do
-    p1 = param(<<p1_mode>>, prog, p1)
-    p2 = param(<<p2_mode>>, prog, p2)
-    if p1 == 0, do: {prog, p2, nil, inputs}, else: {prog, pos + 3, nil, inputs}
+  def run_instruction(<<_, p2_mode, p1_mode, "06">>, [p1, p2 | _], {absolute, rel}, prog, inputs) do
+    p1 = param(<<p1_mode>>, prog, p1, rel)
+    p2 = param(<<p2_mode>>, prog, p2, rel)
+    if p1 == 0, do: {prog, {p2, rel}, nil, inputs}, else: {prog, {absolute + 3, rel}, nil, inputs}
   end
 
   # Test <
-  def run_instruction(<<_, p2_mode, p1_mode, "07">>, [p1, p2, p3 | _], pos, prog, inputs) do
-    p1 = param(<<p1_mode>>, prog, p1)
-    p2 = param(<<p2_mode>>, prog, p2)
+  def run_instruction(<<p3_m, p2_m, p1_m, "07">>, [p1, p2, p3 | _], {abs, rel}, prog, inputs) do
+    p1 = param(<<p1_m>>, prog, p1, rel)
+    p2 = param(<<p2_m>>, prog, p2, rel)
+    p3 = out_position(<<p3_m>>, p3, rel)
     value = if p1 < p2, do: "1", else: "0"
-    {List.replace_at(prog, p3, value), pos + 4, nil, inputs}
+    {write_memory(prog, p3, value), {abs + 4, rel}, nil, inputs}
   end
 
   # Test ==
-  def run_instruction(<<_, p2_mode, p1_mode, "08">>, [p1, p2, p3 | _], pos, prog, inputs) do
-    p1 = param(<<p1_mode>>, prog, p1)
-    p2 = param(<<p2_mode>>, prog, p2)
+  def run_instruction(<<p3_m, p2_m, p1_m, "08">>, [p1, p2, p3 | _], {abs, rel}, prog, inputs) do
+    p1 = param(<<p1_m>>, prog, p1, rel)
+    p2 = param(<<p2_m>>, prog, p2, rel)
+    p3 = out_position(<<p3_m>>, p3, rel)
     value = if p1 == p2, do: "1", else: "0"
-    {List.replace_at(prog, p3, value), pos + 4, nil, inputs}
+    {write_memory(prog, p3, value), {abs + 4, rel}, nil, inputs}
+  end
+
+  # Change relative offset
+  def run_instruction(<<_, _, p1_mode, "09">>, [p1 | _], {absolute, rel}, prog, inputs) do
+    p1 = param(<<p1_mode>>, prog, p1, rel)
+    {prog, {absolute + 2, rel + p1}, nil, inputs}
   end
 
   def run_instruction(<<_, _, _, "99">>, _, _, _, _), do: :halt
 
-  @doc ~S"""
-  iex> alias Advent.Y2019.Day5
-  iex> Day5.param("0", ["1002","4","3","4","33"], 4)
-  33
-  iex> Day5.param("1", ["1002","4","3","4","33"], 4)
-  4
-  """
-  def param("0", prog, position), do: prog |> Enum.at(position) |> String.to_integer()
-  def param("1", _prog, value), do: value
+  # Position mode
+  def param("0", prog, value, _relative) do
+    prog |> Enum.at(value, "0") |> String.to_integer()
+  end
+
+  # Immediate mode
+  def param("1", _prog, value, _relative), do: value
+
+  # Relative mode
+  def param("2", prog, value, relative) do
+    prog |> Enum.at(value + relative, "0") |> String.to_integer()
+  end
+
+  def out_position("0", position, _relative), do: position
+  def out_position("2", position, relative), do: position + relative
+
+  def write_memory(program, position, value) when position > length(program) - 1 do
+    program = program ++ List.duplicate("0", position + 1 - length(program))
+    write_memory(program, position, value)
+  end
+
+  def write_memory(program, position, value) do
+    List.replace_at(program, position, value)
+  end
 end

@@ -21,7 +21,8 @@ defmodule Advent.Y2019.Day7.Part1 do
     for signals <- permutations(~w(0 1 2 3 4)) do
       Task.async(fn ->
         Enum.reduce(signals, input, fn signal, input ->
-          Computer.run_program(program, [signal, input])
+          [output | _tail] = Computer.run_program(program, [signal, input])
+          output
         end)
       end)
     end
