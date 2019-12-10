@@ -15,29 +15,26 @@ defmodule Advent.Y2019.Day10.Part2 do
   900
   """
   def run(puzzle, station, count) do
-    asteroids =
+    galaxy =
       puzzle
       |> Part1.asteroid_coordinates()
       |> Enum.group_by(&Part1.angle(station, &1))
-      |> Enum.map(fn {angle, asteroids} ->
-        {angle, Enum.sort(asteroids, &(distance(station, &1) <= distance(station, &2)))}
+      |> Enum.sort(fn {angle1, _}, {angle2, _} -> angle1 <= angle2 end)
+      |> Enum.map(fn {_angle, asteroids} ->
+        Enum.sort(asteroids, &(distance(station, &1) <= distance(station, &2)))
       end)
-      |> Enum.into(%{})
 
-    {_, {x, y}, _} =
-      asteroids
-      |> Map.keys()
-      |> Enum.sort()
+    {{x, y}, _, _} =
+      0..length(galaxy)
       |> Stream.cycle()
-      |> Enum.reduce_while({asteroids, nil, count}, fn angle, {asteroids, last, count} ->
-        case Map.get(asteroids, angle) do
+      |> Enum.reduce_while({nil, galaxy, count - 1}, fn i, {last, galaxy, count} ->
+        case Enum.at(galaxy, i) do
           [] ->
-            {:cont, {asteroids, last, count}}
+            {:cont, {last, galaxy, count}}
 
           [asteroid | tail] ->
-            asteroids = Map.put(asteroids, angle, tail)
-            new_acc = {asteroids, asteroid, count - 1}
-            if count == 1, do: {:halt, new_acc}, else: {:cont, new_acc}
+            new_acc = {asteroid, List.replace_at(galaxy, i, tail), count - 1}
+            if count == 0, do: {:halt, new_acc}, else: {:cont, new_acc}
         end
       end)
 
