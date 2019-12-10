@@ -1,4 +1,4 @@
-defmodule Advent.Y2018.Day1.Part2 do
+defmodule Advent.Y2018.Day01.Part2 do
   def run(puzzle) do
     puzzle
     |> String.split()
@@ -7,7 +7,7 @@ defmodule Advent.Y2018.Day1.Part2 do
   end
 
   @doc ~S"""
-  iex> import Advent.Y2018.Day1.Part2
+  iex> import Advent.Y2018.Day01.Part2
   iex> find_first_redundant([1, -1])
   0
   iex> find_first_redundant([3, 3, 4, -2, -4])

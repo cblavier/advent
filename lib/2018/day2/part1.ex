@@ -1,4 +1,4 @@
-defmodule Advent.Y2018.Day2.Part1 do
+defmodule Advent.Y2018.Day02.Part1 do
   def run(puzzle) do
     puzzle
     |> String.split()
@@ -6,7 +6,7 @@ defmodule Advent.Y2018.Day2.Part1 do
   end
 
   @doc ~S"""
-  iex> alias Advent.Y2018.Day2.Part1
+  iex> alias Advent.Y2018.Day02.Part1
   iex> box_ids = ~w(abcdef bababc abbcde abcccd aabcdd abcdee ababab)
   iex> Part1.checksum(box_ids)
   12
@@ -24,7 +24,7 @@ defmodule Advent.Y2018.Day2.Part1 do
   end
 
   @doc ~S"""
-  iex> alias Advent.Y2018.Day2.Part1
+  iex> alias Advent.Y2018.Day02.Part1
   iex> Part1.has_double_and_triple?("abcdef")
   {false, false}
   iex> Part1.has_double_and_triple?("bababc")

@@ -1,4 +1,4 @@
-defmodule Advent.Y2018.Day2.Part2 do
+defmodule Advent.Y2018.Day02.Part2 do
   def run(puzzle) do
     puzzle
     |> String.split()
@@ -6,7 +6,7 @@ defmodule Advent.Y2018.Day2.Part2 do
   end
 
   @doc ~S"""
-  iex> alias Advent.Y2018.Day2.Part2
+  iex> alias Advent.Y2018.Day02.Part2
   iex> box_ids = ~w(abcde fghij klmno pqrst fguij axcye wvxyz)
   iex> Part2.similar(box_ids)
   "fgij"
@@ -23,7 +23,7 @@ defmodule Advent.Y2018.Day2.Part2 do
   end
 
   @doc ~S"""
-  iex> alias Advent.Y2018.Day2.Part2
+  iex> alias Advent.Y2018.Day02.Part2
   iex> Part2.differences("abcde", "fghij")
   {5, ""}
   iex> Part2.differences("abcde", "axcye")

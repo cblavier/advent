@@ -1,4 +1,4 @@
-defmodule Advent.Y2018.Day1.Part1 do
+defmodule Advent.Y2018.Day01.Part1 do
   def run(puzzle) do
     puzzle
     |> String.split()
@@ -7,7 +7,7 @@ defmodule Advent.Y2018.Day1.Part1 do
   end
 
   @doc ~S"""
-  iex> import Advent.Y2018.Day1.Part1
+  iex> import Advent.Y2018.Day01.Part1
   iex> apply_frequencies([1, 1, 1])
   3
   iex> apply_frequencies([1, 1, -2])
