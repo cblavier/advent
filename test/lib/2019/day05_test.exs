@@ -7,7 +7,7 @@ defmodule Advent.Y2019.Day05Test do
   @puzzle Advent.Puzzle.load(2019, 5)
 
   test "run part1 puzzle" do
-    assert Enum.member?(Day05.run(@puzzle, [1]), 13_210_611)
+    assert Day05.run(@puzzle, [1]) |> Enum.at(-1) == 13_210_611
   end
 
   test "run part2 puzzle" do

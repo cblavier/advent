@@ -1,5 +1,5 @@
 defmodule Advent.Y2019.Day07.Part1 do
-  alias Advent.Y2019.Day05, as: Computer
+  alias Advent.Y2019.Computer
 
   @doc ~S"""
   iex> alias Advent.Y2019.Day07.Part1
@@ -21,8 +21,7 @@ defmodule Advent.Y2019.Day07.Part1 do
     for signals <- permutations([0, 1, 2, 3, 4]) do
       Task.async(fn ->
         Enum.reduce(signals, input, fn signal, input ->
-          [output | _tail] = Computer.run_program(program, [signal, input])
-          output
+          program |> Computer.run_program([signal, input]) |> Enum.at(-1)
         end)
       end)
     end

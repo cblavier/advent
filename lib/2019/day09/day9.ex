@@ -1,5 +1,5 @@
 defmodule Advent.Y2019.Day09 do
-  alias Advent.Y2019.Day05, as: Computer
+  alias Advent.Y2019.Computer
 
   @doc ~S"""
   iex> alias Advent.Y2019.Day09

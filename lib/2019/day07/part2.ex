@@ -1,5 +1,5 @@
 defmodule Advent.Y2019.Day07.Part2 do
-  alias Advent.Y2019.Day05, as: Computer
+  alias Advent.Y2019.Computer
   alias Advent.Y2019.Day07.Part1
 
   @doc ~S"""
@@ -49,7 +49,7 @@ defmodule Advent.Y2019.Day07.Part2 do
     spawn(fn ->
       receive do
         {:connect, output_pid} ->
-          thrust = run_program(program, [signal], output_pid)
+          thrust = program |> Computer.run_program([signal], output_pid) |> Enum.at(-1)
           if last, do: send(parent_pid, {:thrust, thrust})
       end
     end)
@@ -62,29 +62,5 @@ defmodule Advent.Y2019.Day07.Part2 do
       send(amplifier, {:connect, output_amplifier})
       amplifier
     end
-  end
-
-  defp run_program(program, inputs, output_pid, positions \\ {0, 0}, output \\ nil) do
-    case read_next_instruction(program, positions, inputs) do
-      :halt ->
-        output
-
-      :waiting_input ->
-        receive do
-          {:input, input} -> run_program(program, [input], output_pid, positions, output)
-        end
-
-      {program, positions, new_output, inputs} ->
-        if new_output, do: send(output_pid, {:input, new_output})
-        run_program(program, inputs, output_pid, positions, new_output || output)
-    end
-  end
-
-  defp read_next_instruction(program, positions = {abs, _rel}, inputs) do
-    program
-    |> Map.take(abs..(abs + 3))
-    |> Enum.sort()
-    |> Enum.map(&elem(&1, 1))
-    |> Computer.read_instruction(positions, program, inputs)
   end
 end
