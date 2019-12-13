@@ -11,6 +11,6 @@ defmodule Advent.Y2019.Day12Test do
   end
 
   test "run part2 puzzle" do
-    assert Part2.run(@puzzle) == 12
+    assert Part2.run(@puzzle) == 306_798_770_391_636
   end
 end
