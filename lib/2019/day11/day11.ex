@@ -26,7 +26,8 @@ defmodule Advent.Y2019.Day11 do
         {:input, input} ->
           case instruction do
             :color ->
-              {:cont, {Map.put(hull, position, input), position, direction}}
+              hull = Map.put(hull, position, input)
+              {:cont, {hull, position, direction}}
 
             :direction ->
               {new_position, new_direction} = direction(position, direction, input)
