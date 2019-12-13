@@ -23,7 +23,7 @@ defmodule Advent.Y2019.Computer do
   iex> {Computer.run_program(program, [10]), Computer.run_program(program, [0])}
   {[1], [0]}
   """
-  def run_program(program, inputs, output_pid \\ nil, positions \\ {0, 0}, outputs \\ []) do
+  def run_program(program, inputs \\ [], output_pid \\ nil, positions \\ {0, 0}, outputs \\ []) do
     case read_next_instruction(program, positions, inputs) do
       :halt ->
         outputs
