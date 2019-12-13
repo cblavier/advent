@@ -6,10 +6,10 @@ defmodule Advent.Y2019.Day13Test do
   @puzzle Advent.Puzzle.load(2019, 13)
 
   test "run part1 puzzle" do
-    assert Part1.run(@puzzle) == 452
+    assert Part1.run(@puzzle) == 216
   end
 
   test "run part2 puzzle" do
-    assert Part2.run(@puzzle) == 21415
+    assert Part2.run(@puzzle) == 10_025
   end
 end

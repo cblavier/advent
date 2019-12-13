@@ -26,7 +26,7 @@ defmodule Advent.Y2019.Computer do
   def run_program(program, inputs \\ [], output_pid \\ nil, positions \\ {0, 0}, outputs \\ []) do
     case read_next_instruction(program, positions, inputs) do
       :halt ->
-        outputs
+        Enum.reverse(outputs)
 
       :waiting_input ->
         receive do
@@ -37,7 +37,7 @@ defmodule Advent.Y2019.Computer do
         outputs =
           if new_output do
             if output_pid, do: send(output_pid, {:input, new_output})
-            outputs ++ [new_output]
+            [new_output | outputs]
           else
             outputs
           end
