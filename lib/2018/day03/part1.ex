@@ -27,7 +27,7 @@ defmodule Advent.Y2018.Day03.Part1 do
     Enum.reduce(claims, %{}, fn %{id: id, x: x, y: y, w: w, h: h}, fabric ->
       Enum.reduce(x..(x + w - 1), fabric, fn x, fabric ->
         Enum.reduce(y..(y + h - 1), fabric, fn y, fabric ->
-          Map.update(fabric, {x, y}, [id], &(&1 ++ [id]))
+          Map.update(fabric, {x, y}, [id], &[id | &1])
         end)
       end)
     end)

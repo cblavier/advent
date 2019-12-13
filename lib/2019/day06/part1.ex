@@ -32,8 +32,8 @@ defmodule Advent.Y2019.Day06.Part1 do
 
   def orbits_path(orbits, planet, path \\ []) do
     case Map.get(orbits, planet) do
-      nil -> path
-      orbited -> orbits_path(orbits, orbited, path ++ [orbited])
+      nil -> Enum.reverse(path)
+      orbited -> orbits_path(orbits, orbited, [orbited | path])
     end
   end
 end

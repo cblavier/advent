@@ -34,8 +34,8 @@ defmodule Advent.Y2019.Day10.Part1 do
       |> String.graphemes()
       |> Enum.with_index()
       |> Enum.reduce(acc, fn
-        {"#", x}, acc -> acc ++ [{x, y}]
-        _, acc -> acc
+        {"#", x}, acc -> [{x, y} | acc]
+        _, acc -> Enum.reverse(acc)
       end)
     end)
   end

@@ -19,7 +19,7 @@ defmodule Advent.Y2019.Day01.Part2 do
     added_weight = weights |> hd |> Part1.fuel()
 
     if added_weight > 0 do
-      total_weight([added_weight] ++ weights)
+      total_weight([added_weight | weights])
     else
       weights |> List.delete_at(-1) |> Enum.sum()
     end

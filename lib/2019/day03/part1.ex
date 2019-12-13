@@ -58,13 +58,13 @@ defmodule Advent.Y2019.Day03.Part1 do
   """
   def inc_pos(path = [{x, y} | _], dist_x, 0) do
     Enum.reduce(1..abs(dist_x), path, fn i, path ->
-      [if(dist_x > 0, do: {x + i, y}, else: {x - i, y})] ++ path
+      [if(dist_x > 0, do: {x + i, y}, else: {x - i, y}) | path]
     end)
   end
 
   def inc_pos(path = [{x, y} | _], 0, dist_y) do
     Enum.reduce(1..abs(dist_y), path, fn i, path ->
-      [if(dist_y > 0, do: {x, y + i}, else: {x, y - i})] ++ path
+      [if(dist_y > 0, do: {x, y + i}, else: {x, y - i}) | path]
     end)
   end
 
