@@ -58,20 +58,9 @@ defmodule Advent.Y2019.Day14.Part1 do
 
   @doc ~S"""
   iex> alias Advent.Y2019.Day14.Part1
-  iex> puzzle = ""
-  iex> puzzle = puzzle <> "10 ORE => 10 A\n"
-  iex> puzzle = puzzle <> "1 ORE => 1 B\n"
-  iex> puzzle = puzzle <> "7 A, 1 B => 1 C\n"
-  iex> puzzle = puzzle <> "7 A, 1 C => 1 D\n"
-  iex> puzzle = puzzle <> "7 A, 1 D => 1 E\n"
-  iex> puzzle = puzzle <> "7 A, 1 E => 1 FUEL"
-  iex> Part1.parse_formulas(puzzle)
+  iex> Part1.parse_formulas("10 ORE => 10 A\n7 A, 1 E => 1 FUEL")
   %{
     "A" => {10, [{"ORE", 10}]},
-    "B" => {1, [{"ORE", 1}]},
-    "C" => {1, [{"A", 7}, {"B", 1}]},
-    "D" => {1, [{"A", 7}, {"C", 1}]},
-    "E" => {1, [{"A", 7}, {"D", 1}]},
     "FUEL" => {1, [{"A", 7}, {"E", 1}]}
   }
   """
