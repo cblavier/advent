@@ -3,28 +3,29 @@ defmodule Advent.Y2019.Day15.Part2 do
   alias Advent.Y2019.Day15.Part1
 
   def run(puzzle) do
-    {program, positions, _} =
-      puzzle
-      |> Computer.parse_program()
-      |> Part1.command_robot()
-      |> Enum.min_by(&elem(&1, 2))
-
-    program
-    |> fill_oxygen(positions)
+    puzzle
+    |> Computer.parse_program()
+    |> program_at_oxygen_sytem()
+    |> fill_oxygen()
     |> Enum.max()
   end
 
-  def fill_oxygen(program, pos, minutes \\ 0, last_direction \\ nil) do
+  defp program_at_oxygen_sytem(program) do
+    program
+    |> Part1.find_oxygen_system()
+    |> Enum.min_by(&elem(&1, 2))
+  end
+
+  defp fill_oxygen({prog, pos, _}, minutes \\ 0, last_direction \\ nil) do
     last_direction
     |> Part1.directions()
-    |> Enum.map(fn direction ->
-      {:waiting_input, program, pos, [output | _]} = Computer.run_program(program, direction, pos)
+    |> Enum.flat_map(fn dir ->
+      {:waiting_input, prog, pos, [output | _]} = Computer.run_program(prog, dir, pos)
 
       case output do
         0 -> [minutes]
-        1 -> fill_oxygen(program, pos, minutes + 1, direction)
+        1 -> fill_oxygen({prog, pos, nil}, minutes + 1, dir)
       end
     end)
-    |> Enum.flat_map(& &1)
   end
 end
