@@ -8,17 +8,16 @@ defmodule Advent.Y2019.Day15.Part1 do
     |> Enum.min_by(&elem(&1, 2))
   end
 
-  def command_robot(program, positions \\ {0, 0}, path_length \\ 0, last_direction \\ nil) do
+  def command_robot(program, pos \\ {0, 0}, path_length \\ 0, last_direction \\ nil) do
     last_direction
     |> directions()
     |> Enum.map(fn direction ->
-      {:waiting_input, program, positions, outputs} =
-        Computer.run_program(program, direction, positions)
+      {:waiting_input, program, pos, [output | _]} = Computer.run_program(program, direction, pos)
 
-      case Enum.at(outputs, -1) do
+      case output do
         0 -> []
-        1 -> command_robot(program, positions, path_length + 1, direction)
-        2 -> [{program, positions, path_length + 1}]
+        1 -> command_robot(program, pos, path_length + 1, direction)
+        2 -> [{program, pos, path_length + 1}]
       end
     end)
     |> Enum.flat_map(& &1)

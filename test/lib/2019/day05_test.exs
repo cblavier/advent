@@ -15,6 +15,6 @@ defmodule Advent.Y2019.Day05Test do
   end
 
   defp take_result(output) do
-    output |> elem(1) |> Enum.at(-1)
+    output |> elem(1) |> hd()
   end
 end
