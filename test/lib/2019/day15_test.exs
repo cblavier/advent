@@ -10,8 +10,6 @@ defmodule Advent.Y2019.Day15Test do
   end
 
   test "run part2 puzzle" do
-    Advent.Benchmark.measure(fn ->
-      assert Part2.run(@puzzle) == 388
-    end)
+    assert Part2.run(@puzzle) == 388
   end
 end
