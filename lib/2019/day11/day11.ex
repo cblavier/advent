@@ -13,7 +13,7 @@ defmodule Advent.Y2019.Day11 do
 
   defp spawn_robot(program, input, parent_pid) do
     spawn(fn ->
-      Computer.run_program(program, [input], parent_pid)
+      Computer.run_program({program, parent_pid}, input)
       send(parent_pid, :halt)
     end)
   end

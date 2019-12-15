@@ -18,7 +18,7 @@ defmodule Advent.Y2019.Day13.Part2 do
 
   defp spawn_game(program, parent_pid) do
     spawn(fn ->
-      Computer.run_program(program, [], parent_pid)
+      Computer.run_program({program, parent_pid})
       send(parent_pid, :halt)
     end)
   end

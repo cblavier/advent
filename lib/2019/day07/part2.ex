@@ -49,8 +49,8 @@ defmodule Advent.Y2019.Day07.Part2 do
     spawn(fn ->
       receive do
         {:connect, output_pid} ->
-          thrust = program |> Computer.run_program([signal], output_pid) |> Enum.at(-1)
-          if last, do: send(parent_pid, {:thrust, thrust})
+          {:ok, thrusts} = Computer.run_program({program, output_pid}, signal)
+          if last, do: send(parent_pid, {:thrust, Enum.at(thrusts, -1)})
       end
     end)
   end

@@ -7,11 +7,11 @@ defmodule Advent.Y2019.Day13.Part1 do
     puzzle
     |> Computer.parse_program()
     |> Computer.run_program()
-    |> draw_game()
+    |> draw_stage()
     |> count_blocks()
   end
 
-  def draw_game(instructions) do
+  def draw_stage({:ok, instructions}) do
     instructions
     |> Enum.chunk_every(3)
     |> Enum.reduce(%{}, fn [x, y, tile_id], stage ->
