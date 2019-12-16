@@ -20,8 +20,10 @@ defmodule Advent.Y2019.Day16.Part2 do
 
   def fft(_, signal) do
     signal
-    |> Enum.reverse()
-    |> Enum.scan(0, fn x, acc -> abs(acc + x) |> rem(10) end)
-    |> Enum.reverse()
+    |> List.foldr(
+      {0, []},
+      fn item, {acc, signal} -> {acc + item, [rem(acc + item, 10) | signal]} end
+    )
+    |> elem(1)
   end
 end

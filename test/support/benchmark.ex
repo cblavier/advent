@@ -1,11 +1,7 @@
 defmodule Advent.Benchmark do
   def measure(function) do
-    time =
-      function
-      |> :timer.tc()
-      |> elem(0)
-      |> Kernel./(1_000)
-
-    IO.puts("runtime: #{time}ms")
+    {time, result} = :timer.tc(function)
+    IO.puts("runtime: #{time / 1000}ms")
+    result
   end
 end
