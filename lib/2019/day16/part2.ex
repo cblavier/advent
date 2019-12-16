@@ -9,7 +9,7 @@ defmodule Advent.Y2019.Day16.Part2 do
     1..phase_count
     |> Enum.reduce(signal, &fft/2)
     |> Enum.take(8)
-    |> Enum.join("")
+    |> Integer.undigits()
   end
 
   defp expand_signal(signal, count) do
