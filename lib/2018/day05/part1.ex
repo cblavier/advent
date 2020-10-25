@@ -12,7 +12,7 @@ defmodule Advent.Y2018.Day05.Part1 do
   iex> puzzle |> Part1.parallel_resolve(chunk_size: 3) |> Enum.join()
   "dabCBAcaDA"
   """
-  def parallel_resolve(puzzle, chunk_size: chunk_sieze) when length(puzzle) <= chunk_size do
+  def parallel_resolve(puzzle, chunk_size: chunk_size) when length(puzzle) <= chunk_size do
     resolve(puzzle)
   end
 
