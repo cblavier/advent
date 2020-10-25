@@ -1,14 +1,19 @@
 defmodule Advent.Y2018.Day04.Part1 do
   def run(puzzle) do
     puzzle
+    |> parse_all_shifts()
+    |> Enum.max_by(fn {_guard_id, minutes_total, _minutes} -> minutes_total end)
+    |> most_asleep_minute()
+  end
+
+  def parse_all_shifts(puzzle) do
+    puzzle
     |> String.split("\n")
     |> Enum.map(&parse_shift_entry/1)
     |> Enum.sort_by(fn {date, _} -> date end)
     |> chunk_by_shift()
     |> group_by_guard()
     |> Enum.map(&shift_asleep_minutes/1)
-    |> Enum.max_by(fn {_guard_id, minutes_total, _minutes} -> minutes_total end)
-    |> most_asleep_minute()
   end
 
   defp parse_shift_entry(shift_entry) do
