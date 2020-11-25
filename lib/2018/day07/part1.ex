@@ -60,9 +60,30 @@ defmodule Advent.Y2018.Day07.Part1 do
     {graph, starts}
   end
 
+  @regex Regex.compile!(~S/Step (?<prereq>\w) must .* step (?<step>\w) can begin./)
   @doc ~S"""
   iex> import Advent.Y2018.Day07.Part1
-  iex> traverse({%{"A" => {["C"], ["B", "D"]}, "B" => {["A"], ["E"]}, "C" => {[], ["A", "F"]}, "D" => {["A"], ["E"]}, "E" => {["B", "D", "F"], []}, "F" => {["C"], ["E"]}}, ["C"]})
+  iex> parse_puzzle_entry("Step Z must be finished before step A can begin.")
+  {"Z", "A"}
+  """
+  def parse_puzzle_entry(step) do
+    %{"prereq" => prereq, "step" => step} = Regex.named_captures(@regex, step)
+    {prereq, step}
+  end
+
+  @doc ~S"""
+  iex> import Advent.Y2018.Day07.Part1
+  iex> traverse({
+  ...>  %{
+  ...>    "A" => {["C"], ["B", "D"]},
+  ...>    "B" => {["A"], ["E"]},
+  ...>    "C" => {[], ["A", "F"]},
+  ...>    "D" => {["A"], ["E"]},
+  ...>    "E" => {["B", "D", "F"], []},
+  ...>    "F" => {["C"], ["E"]}
+  ...>  },
+  ...>  ["C"]
+  ...> })
   ["C", "A", "B", "D", "F", "E"]
   """
   def traverse(graph_and_available_nodes, traversed \\ [])
@@ -87,16 +108,5 @@ defmodule Advent.Y2018.Day07.Part1 do
       end)
 
     traverse({graph, available_nodes}, [new_node | traversed])
-  end
-
-  @regex Regex.compile!(~S/Step (?<prereq>\w) must .* step (?<step>\w) can begin./)
-  @doc ~S"""
-  iex> import Advent.Y2018.Day07.Part1
-  iex> parse_puzzle_entry("Step Z must be finished before step A can begin.")
-  {"Z", "A"}
-  """
-  def parse_puzzle_entry(step) do
-    %{"prereq" => prereq, "step" => step} = Regex.named_captures(@regex, step)
-    {prereq, step}
   end
 end
