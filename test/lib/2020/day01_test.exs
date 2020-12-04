@@ -1,7 +1,5 @@
 defmodule Advent.Y2020.Day01Test do
   use ExUnit.Case
-  doctest Advent.Y2020.Day01.Part1
-  doctest Advent.Y2020.Day01.Part2
 
   alias Advent.Y2020.Day01.Part1
   alias Advent.Y2020.Day01.Part2
