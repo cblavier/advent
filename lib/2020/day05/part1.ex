@@ -24,14 +24,13 @@ defmodule Advent.Y2020.Day05.Part1 do
     {row, col}
   end
 
-  def chop_range(range, :lower) do
+  def chop_range(range, bound) do
     new_size = round(Enum.count(range) / 2)
-    Enum.slice(range, 0, new_size)
-  end
 
-  def chop_range(range, :upper) do
-    new_size = round(Enum.count(range) / 2)
-    Enum.slice(range, new_size, new_size)
+    case bound do
+      :lower -> Enum.slice(range, 0, new_size)
+      :upper -> Enum.slice(range, new_size, new_size)
+    end
   end
 
   def boarding_id({row, col}), do: row * 8 + col
