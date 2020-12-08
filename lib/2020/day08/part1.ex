@@ -6,13 +6,12 @@ defmodule Advent.Y2020.Day08.Part1 do
     |> elem(0)
   end
 
-  @regex Regex.compile!(~S/(?<inst_name>\w{3}) (?<count>[-+]\d+)/)
   def parse_program(program) do
     program
     |> String.split("\n")
     |> Enum.with_index()
     |> Enum.map(fn {instruction, index} ->
-      %{"inst_name" => inst_name, "count" => count} = Regex.named_captures(@regex, instruction)
+      [inst_name, count] = String.split(instruction, " ")
       {index, {inst_name, String.to_integer(count)}}
     end)
     |> Map.new()
@@ -20,17 +19,17 @@ defmodule Advent.Y2020.Day08.Part1 do
 
   def run_program(program) do
     Stream.cycle([0])
-    |> Enum.reduce_while({0, 0, []}, fn _, {position, acc, already_run} ->
-      if Enum.member?(already_run, position) do
-        {:halt, {acc, :cycle}}
+    |> Enum.reduce_while({0, 0, MapSet.new()}, fn _, {position, acc, visited} ->
+      if MapSet.member?(visited, position) do
+        {:halt, {acc, :cycle, visited}}
       else
         case Map.get(program, position) do
           nil ->
-            {:halt, {acc, :end}}
+            {:halt, {acc, :end, visited}}
 
           instruction ->
             {new_position, new_acc} = run_instruction(instruction, position, acc)
-            {:cont, {new_position, new_acc, [position | already_run]}}
+            {:cont, {new_position, new_acc, MapSet.put(visited, position)}}
         end
       end
     end)
