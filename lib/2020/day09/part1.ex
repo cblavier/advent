@@ -9,7 +9,7 @@ defmodule Advent.Y2020.Day09.Part1 do
 
   def find_invalid_set(puzzle) do
     puzzle
-    |> Stream.chunk_every(26, 1, leftofver: :discard)
+    |> Stream.chunk_every(26, 1, :discard)
     |> Stream.reject(&is_valid_chunk?/1)
     |> Enum.at(0)
   end

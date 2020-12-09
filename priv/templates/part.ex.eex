@@ -1,0 +1,5 @@
+defmodule Advent.Y<%=@year%>.Day<%=@day%>.Part<%=@part%> do
+  def run(_puzzle) do
+    :ok
+  end
+end
