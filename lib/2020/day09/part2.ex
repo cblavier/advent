@@ -14,6 +14,8 @@ defmodule Advent.Y2020.Day09.Part2 do
   end
 
   def find_sequence(target, puzzle) do
+    puzzle = Enum.reject(puzzle, &(&1 >= target))
+
     2..length(puzzle)
     |> Stream.flat_map(fn combination_size ->
       Stream.chunk_every(puzzle, combination_size, 1, :discard)
