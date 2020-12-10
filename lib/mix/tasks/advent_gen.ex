@@ -2,10 +2,14 @@ defmodule Mix.Tasks.Advent.Gen do
   use Mix.Task
 
   def run([year, day]) do
-    day = String.pad_leading(day, 2, "0")
-    create_libs(year, day)
-    create_tests(year, day)
-    create_fixtures(year, day)
+    day_with_padding = String.pad_leading(day, 2, "0")
+    create_libs(year, day_with_padding)
+    create_tests(year, day_with_padding)
+
+    case download_puzzle(year, day) do
+      nil -> IO.puts("could not download puzzle")
+      puzzle -> create_fixtures(year, day_with_padding, puzzle)
+    end
   end
 
   def run(_) do
@@ -40,8 +44,7 @@ defmodule Mix.Tasks.Advent.Gen do
     )
   end
 
-  defp create_fixtures(year, day) do
-    puzzle = download_puzzle(year, day)
+  defp create_fixtures(year, day, puzzle) do
     directory = "test/fixtures/#{year}/day#{day}"
     Mix.Generator.create_directory(directory)
     Mix.Generator.create_file("#{directory}/puzzle.txt", puzzle)
@@ -55,8 +58,11 @@ defmodule Mix.Tasks.Advent.Gen do
     url = 'https://adventofcode.com/#{year}/day/#{day}/input'
 
     case :httpc.request(:get, {url, headers}, [], []) do
-      {:ok, {{'HTTP/1.1', 200, 'OK'}, _, puzzle}} -> to_string(puzzle)
-      _ -> ""
+      {:ok, {{'HTTP/1.1', 200, 'OK'}, _, puzzle}} ->
+        to_string(puzzle)
+
+      _ ->
+        nil
     end
   end
 end
