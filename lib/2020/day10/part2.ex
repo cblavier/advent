@@ -1,16 +1,29 @@
 defmodule Advent.Y2020.Day10.Part2 do
   def run(puzzle) do
+    {:ok, memo} = Agent.start(fn -> %{} end)
+
     puzzle
     |> String.split("\n")
     |> Enum.map(&String.to_integer/1)
     |> Enum.sort()
-    |> find_arrangements()
+    |> memoized_find_arrangements(0, memo)
   end
 
-  def find_arrangements(joltages, current \\ 0, acc \\ 0)
-  def find_arrangements([], _current, acc), do: acc + 1
+  def memoized_find_arrangements(joltages, current, memo) do
+    case Agent.get(memo, &Map.get(&1, {joltages, current})) do
+      nil ->
+        result = find_arrangements(joltages, current, memo)
+        Agent.update(memo, &Map.put(&1, {joltages, current}, result))
+        result
 
-  def find_arrangements(joltages, current, acc) do
+      result ->
+        result
+    end
+  end
+
+  def find_arrangements([], _current, _memo), do: 1
+
+  def find_arrangements(joltages, current, memo) do
     joltages
     |> Enum.slice(0..2)
     |> Enum.with_index()
@@ -18,8 +31,9 @@ defmodule Advent.Y2020.Day10.Part2 do
     |> Enum.map(fn {joltage, index} ->
       {joltage, Enum.slice(joltages, (index + 1)..-1)}
     end)
-    |> Enum.reduce(acc, fn {joltage, tail}, acc ->
-      find_arrangements(tail, joltage, acc)
+    |> Enum.map(fn {joltage, tail} ->
+      memoized_find_arrangements(tail, joltage, memo)
     end)
+    |> Enum.sum()
   end
 end

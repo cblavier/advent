@@ -13,6 +13,6 @@ defmodule Advent.Y2020.Day10Test do
 
   @tag timeout: :infinity
   test "run part2 puzzle" do
-    assert Part2.run(@puzzle) == 42
+    assert Part2.run(@puzzle) == 74_049_191_673_856
   end
 end
