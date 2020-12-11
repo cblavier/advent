@@ -11,6 +11,7 @@ defmodule Advent.Y2015.Day04Test do
     assert Part1.run(@puzzle) == 282_749
   end
 
+  @tag :skip
   test "run part2 puzzle" do
     assert Part2.run(@puzzle) == 9_962_624
   end

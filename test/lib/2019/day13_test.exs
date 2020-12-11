@@ -9,6 +9,7 @@ defmodule Advent.Y2019.Day13Test do
     assert Part1.run(@puzzle) == 216
   end
 
+  @tag :skip
   test "run part2 puzzle" do
     assert Part2.run(@puzzle) == 10_025
   end

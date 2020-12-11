@@ -6,10 +6,12 @@ defmodule Advent.Y2019.Day16Test do
 
   @puzzle Advent.Puzzle.load(2019, 16)
 
+  @tag :skip
   test "run part1 puzzle" do
     assert Part1.run(@puzzle, 100) == 74_608_727
   end
 
+  @tag :skip
   test "run part2 puzzle" do
     assert Part2.run(@puzzle, 100) == 57_920_757
   end
