@@ -47,7 +47,7 @@ defmodule Mix.Tasks.Advent.Gen do
   defp create_fixtures(year, day, puzzle) do
     directory = "test/fixtures/#{year}/day#{day}"
     Mix.Generator.create_directory(directory)
-    Mix.Generator.create_file("#{directory}/puzzle.txt", puzzle)
+    Mix.Generator.create_file("#{directory}/puzzle.txt", String.trim(puzzle))
   end
 
   defp download_puzzle(year, day) do
