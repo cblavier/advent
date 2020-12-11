@@ -9,7 +9,7 @@ defmodule Advent.Y2020.Day11.Part2 do
     puzzle
     |> Part1.build_grid()
     |> Part1.with_dimensions(puzzle)
-    |> Part1.evolve(&adjacents/3, &should_turn_occupied?/1, &should_turn_free?/1)
+    |> Part1.evolve(&adjacents/3, &Part1.should_turn_occupied?/1, &should_turn_free?/1)
     |> Part1.count_occupied()
   end
 
@@ -30,10 +30,6 @@ defmodule Advent.Y2020.Day11.Part2 do
         end)
       end
     )
-  end
-
-  def should_turn_occupied?(adjacents) do
-    Enum.all?(adjacents, &(&1 != "#"))
   end
 
   def should_turn_free?(adjacents) do
