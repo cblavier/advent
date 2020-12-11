@@ -14,7 +14,7 @@ defmodule Mix.Tasks.Advent.Gen do
 
   def run(_) do
     today = Date.utc_today()
-    run([today.year, today.day])
+    run([to_string(today.year), to_string(today.day)])
   end
 
   defp create_libs(year, day) do
