@@ -5,7 +5,7 @@ defmodule Advent.Y2020.Day11.Part1 do
     puzzle
     |> build_grid()
     |> with_dimensions(puzzle)
-    |> evolve()
+    |> evolve(&adjacents/3, &should_turn_occupied?/1, &should_turn_free?/1)
     |> count_occupied()
   end
 
@@ -22,17 +22,25 @@ defmodule Advent.Y2020.Day11.Part1 do
     {grid, rows, cols}
   end
 
-  def evolve({grid, rows, cols}) do
+  def evolve({grid, rows, cols}, adjacents_fn, should_turn_occupied_fn?, should_turn_free_fn?) do
     all_positions = for x <- 0..(cols - 1), y <- 0..(rows - 1), do: {x, y}
 
     Stream.cycle([0])
     |> Enum.reduce_while(grid, fn _, grid ->
       changes =
         Enum.reduce(all_positions, [], fn {x, y}, changes ->
-          cond do
-            should_turn_occupied?(grid, x, y) -> [{x, y, "#"} | changes]
-            should_turn_free?(grid, x, y) -> [{x, y, "L"} | changes]
-            true -> changes
+          case Map.get(grid, {x, y}) do
+            "." ->
+              changes
+
+            seat ->
+              adjacents = adjacents_fn.(grid, x, y)
+
+              cond do
+                seat == "L" && should_turn_occupied_fn?.(adjacents) -> [{x, y, "#"} | changes]
+                seat == "#" && should_turn_free_fn?.(adjacents) -> [{x, y, "L"} | changes]
+                true -> changes
+              end
           end
         end)
 
@@ -44,37 +52,27 @@ defmodule Advent.Y2020.Day11.Part1 do
     end)
   end
 
-  def should_turn_occupied?(grid, x, y) do
-    if Map.get(grid, {x, y}) == "L" do
-      Enum.all?(adjacents(x, y), fn {x, y} ->
-        Map.get(grid, {x, y}) != "#"
-      end)
-    else
-      false
-    end
+  def adjacents(grid, x, y) do
+    for {x, y} <- [
+          {x + 1, y},
+          {x + 1, y - 1},
+          {x + 1, y + 1},
+          {x, y + 1},
+          {x, y - 1},
+          {x - 1, y},
+          {x - 1, y - 1},
+          {x - 1, y + 1}
+        ],
+        into: [],
+        do: Map.get(grid, {x, y})
   end
 
-  def should_turn_free?(grid, x, y) do
-    if Map.get(grid, {x, y}) == "#" do
-      Enum.count(adjacents(x, y), fn {x, y} ->
-        Map.get(grid, {x, y}) == "#"
-      end) >= 4
-    else
-      false
-    end
+  def should_turn_occupied?(adjacents) do
+    Enum.all?(adjacents, &(&1 != "#"))
   end
 
-  def adjacents(x, y) do
-    [
-      {x + 1, y},
-      {x + 1, y - 1},
-      {x + 1, y + 1},
-      {x, y + 1},
-      {x, y - 1},
-      {x - 1, y},
-      {x - 1, y - 1},
-      {x - 1, y + 1}
-    ]
+  def should_turn_free?(adjacents) do
+    Enum.count(adjacents, &(&1 == "#")) >= 4
   end
 
   def apply_changes(grid, changes) do
