@@ -4,7 +4,6 @@
 
 [Advent of Code](http://adventofcode.com/)
 
-Only years 2018, 2019 & 2020 (so far).
-
-No dependencies, simply run `mix test`
+Written in Elixir.
+No dependencies, simply install latest Elixir and run `mix test`
 
