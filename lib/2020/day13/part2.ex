@@ -2,7 +2,8 @@ defmodule Advent.Y2020.Day13.Part2 do
   def run(puzzle) do
     puzzle
     |> parse_schedule()
-    |> find_sequence()
+    |> Enum.reduce({0, 1}, &find_sequence/2)
+    |> elem(0)
   end
 
   def parse_schedule(puzzle) do
@@ -18,17 +19,11 @@ defmodule Advent.Y2020.Day13.Part2 do
     |> Enum.reject(&is_nil/1)
   end
 
-  def find_sequence(timetable) do
-    timetable
-    |> Enum.reduce({0, 1}, &add_to_sequence/2)
-    |> elem(0)
-  end
-
-  defp add_to_sequence({bus, index}, {t, step}) do
-    if Integer.mod(t + index, bus) == 0 do
-      {t, lcm(step, bus)}
+  defp find_sequence({bus_id, index}, {time, step}) do
+    if rem(time + index, bus_id) == 0 do
+      {time, lcm(step, bus_id)}
     else
-      add_to_sequence({bus, index}, {t + step, step})
+      find_sequence({bus_id, index}, {time + step, step})
     end
   end
 
