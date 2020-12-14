@@ -14,7 +14,7 @@ defmodule Advent.Y2020.Day14.Part2 do
     {memory, line |> String.split(" = ") |> Enum.at(-1) |> String.graphemes()}
   end
 
-  @regex Regex.compile!(~S/mem\[(?<address>\d+)\] = (?<value>\d+)/)
+  @regex ~r/mem\[(?<address>\d+)\] = (?<value>\d+)/
   def run_instruction(instruction, {memory, mask}) do
     %{"address" => address, "value" => value} = Regex.named_captures(@regex, instruction)
 
