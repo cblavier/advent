@@ -32,15 +32,14 @@ defmodule Advent.Y2020.Day14.Part2 do
   end
 
   def find_addresses(address_and_mask) do
-    Enum.reduce(address_and_mask, [[]], fn
+    Enum.reduce(address_and_mask, [0], fn
       {_, "X"}, acc -> fork(acc)
-      {_, "1"}, acc -> prepend_to_all(acc, "1")
-      {"1", _}, acc -> prepend_to_all(acc, "1")
-      _, acc -> prepend_to_all(acc, "0")
+      {_, "1"}, acc -> prepend_to_all(acc, 1)
+      {"1", _}, acc -> prepend_to_all(acc, 1)
+      _, acc -> prepend_to_all(acc, 0)
     end)
-    |> Enum.map(&(&1 |> Enum.reverse() |> Enum.join() |> String.to_integer(2)))
   end
 
-  def prepend_to_all(acc, part), do: Enum.map(acc, &[part | &1])
-  def fork(acc), do: Enum.flat_map(acc, &[["0" | &1], ["1" | &1]])
+  def prepend_to_all(acc, part), do: Enum.map(acc, &(&1 * 2 + part))
+  def fork(acc), do: Enum.flat_map(acc, &[&1 * 2, &1 * 2 + 1])
 end
