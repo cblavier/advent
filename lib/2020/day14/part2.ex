@@ -24,15 +24,16 @@ defmodule Advent.Y2020.Day14.Part2 do
       |> to_string(2)
       |> String.pad_leading(length(mask), "0")
       |> String.graphemes()
-      |> Enum.zip(mask)
-      |> find_addresses()
+      |> find_addresses(mask)
       |> Enum.reduce(memory, &Map.put(&2, &1, to_integer(value))),
       mask
     }
   end
 
-  def find_addresses(address_and_mask) do
-    Enum.reduce(address_and_mask, [0], fn
+  def find_addresses(address, mask) do
+    address
+    |> Enum.zip(mask)
+    |> Enum.reduce([0], fn
       {_, "X"}, acc -> fork(acc)
       {_, "1"}, acc -> add_bit(acc, 1)
       {"1", _}, acc -> add_bit(acc, 1)
