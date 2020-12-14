@@ -14,6 +14,6 @@ defmodule Advent.Y2020.Day14Test do
     assert Part2.find_addresses(42, "000000000000000000000000000000X1001X") ==
              [26, 27, 58, 59]
 
-    # assert Part2.run(@puzzle) == 3_394_509_207_186
+    assert Part2.run(@puzzle) == 3_394_509_207_186
   end
 end
