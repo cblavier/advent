@@ -1,5 +1,7 @@
 defmodule Advent.Y2020.Day14.Part2 do
   alias Advent.Y2020.Day14.Part1
+  import Integer, only: [to_string: 2]
+  import String, only: [to_integer: 1]
 
   def run(puzzle) do
     puzzle
@@ -16,22 +18,17 @@ defmodule Advent.Y2020.Day14.Part2 do
   def run_instruction(instruction, {memory, mask}) do
     %{"address" => address, "value" => value} = Regex.named_captures(@regex, instruction)
 
-    address =
+    {
       address
-      |> String.to_integer()
-      |> Integer.to_string(2)
+      |> to_integer()
+      |> to_string(2)
       |> String.pad_leading(length(mask), "0")
       |> String.graphemes()
-
-    memory =
-      address
       |> Enum.zip(mask)
       |> find_addresses()
-      |> Enum.reduce(memory, fn address, memory ->
-        Map.put(memory, address, String.to_integer(value))
-      end)
-
-    {memory, mask}
+      |> Enum.reduce(memory, &Map.put(&2, &1, to_integer(value))),
+      mask
+    }
   end
 
   def find_addresses(address_and_mask) do
