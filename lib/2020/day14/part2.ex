@@ -1,28 +1,31 @@
 defmodule Advent.Y2020.Day14.Part2 do
-  alias Advent.Y2020.Day14.Part1
-
-  use Bitwise
-
   def run(puzzle) do
     puzzle
-    |> Part1.parse_program()
-    |> Enum.map(&Part1.parse_program_chunk/1)
-    |> Enum.reduce(%{}, &run_program_chunk/2)
-    |> Enum.map(&elem(&1, 1))
-    |> Enum.sum()
+    |> String.split("\n")
+    |> Enum.reduce({%{}, nil}, &run_instruction/2)
+    |> Advent.Y2020.Day14.Part1.memory_sum()
   end
 
-  def run_program_chunk({mask, instructions}, memory) do
-    Enum.reduce(instructions, memory, fn {address, value}, memory ->
+  def run_instruction(line = "mask" <> _, {memory, _mask}) do
+    {memory, line |> String.split(" = ") |> Enum.at(-1)}
+  end
+
+  @regex Regex.compile!(~S/mem\[(?<address>\d+)\] = (?<value>\d+)/)
+  def run_instruction(instruction, {memory, mask}) do
+    %{"address" => address, "value" => value} = Regex.named_captures(@regex, instruction)
+    {address, value} = {String.to_integer(address), String.to_integer(value)}
+
+    memory =
       address
       |> find_addresses(mask)
       |> Enum.reduce(memory, fn address, memory ->
         Map.put(memory, address, value)
       end)
-    end)
+
+    {memory, mask}
   end
 
-  def find_addresses(address, mask) when is_integer(address) and is_binary(mask) do
+  def find_addresses(address, mask) do
     address
     |> Integer.to_string(2)
     |> String.pad_leading(String.length(mask), "0")
