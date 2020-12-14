@@ -25,15 +25,14 @@ defmodule Advent.Y2020.Day14.Part2 do
 
     memory =
       address
-      |> find_addresses(mask)
+      |> Enum.zip(mask)
+      |> find_addresses()
       |> Enum.reduce(memory, fn address, memory ->
         Map.put(memory, address, String.to_integer(value))
       end)
 
     {memory, mask}
   end
-
-  def find_addresses(address, mask), do: address |> Enum.zip(mask) |> find_addresses()
 
   def find_addresses(address_and_mask) do
     Enum.reduce(address_and_mask, [0], fn
