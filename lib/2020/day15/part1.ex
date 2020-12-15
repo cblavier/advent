@@ -13,8 +13,8 @@ defmodule Advent.Y2020.Day15.Part1 do
     |> String.split(",")
     |> Enum.map(&String.to_integer/1)
     |> Enum.with_index()
-    |> Enum.reduce({nil, %{}}, fn {n, index}, {_last, spokens} ->
-      {n, Map.put(spokens, n, [index + 1])}
+    |> Enum.reduce({nil, %{}}, fn {n, i}, {_, spokens} ->
+      {n, Map.put(spokens, n, [i + 1])}
     end)
   end
 
@@ -22,9 +22,8 @@ defmodule Advent.Y2020.Day15.Part1 do
     Enum.reduce(turns, acc, fn n, {last, spokens} ->
       new_spoken =
         case Map.get(spokens, last) do
-          [_head] -> 0
-          [head1, head2] -> head1 - head2
-          [head1, head2 | _] -> head1 - head2
+          [_] -> 0
+          [h1, h2 | _] -> h1 - h2
         end
 
       spokens = Map.update(spokens, new_spoken, [n], fn [h | _] -> [n, h] end)
