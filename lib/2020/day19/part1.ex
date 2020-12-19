@@ -4,7 +4,7 @@ defmodule Advent.Y2020.Day19.Part1 do
   def run(puzzle) do
     {rules, messages} = parse_puzzle(puzzle)
     regex = build_regex(rules)
-    Enum.count(messages, &Regex.match?(regex, &1))
+    Enum.count(messages, &(&1 =~ regex))
   end
 
   def parse_puzzle(puzzle) do
@@ -33,27 +33,24 @@ defmodule Advent.Y2020.Day19.Part1 do
     {rules, split(messages, "\n")}
   end
 
-  def build_regex(rules, max_occurences \\ 1) do
-    regex = build_regex(rules, 0, %{}, max_occurences)
+  def build_regex(rules, max_depth \\ 1) do
+    regex = build_regex(rules, 0, %{}, max_depth)
     Regex.compile!("^#{regex}$")
   end
 
-  def build_regex(rules, index, occurences, max_occurences) do
-    case Map.get_and_update(occurences, index, fn
-           nil -> {0, 1}
-           n -> {n, n + 1}
-         end) do
-      {^max_occurences, _} ->
+  def build_regex(rules, index, matches, max_depth) do
+    case Map.get_and_update(matches, index, &if(&1, do: {&1, &1 + 1}, else: {0, 1})) do
+      {^max_depth, _} ->
         ""
 
-      {_, occurences} ->
+      {_, matches} ->
         case Map.get(rules, index) do
           {:redirects, redirects} ->
-            for i <- redirects, into: "", do: build_regex(rules, i, occurences, max_occurences)
+            for i <- redirects, into: "", do: build_regex(rules, i, matches, max_depth)
 
           {:or, [or1, or2]} ->
-            or1 = for i <- or1, into: "", do: build_regex(rules, i, occurences, max_occurences)
-            or2 = for i <- or2, into: "", do: build_regex(rules, i, occurences, max_occurences)
+            or1 = for i <- or1, into: "", do: build_regex(rules, i, matches, max_depth)
+            or2 = for i <- or2, into: "", do: build_regex(rules, i, matches, max_depth)
             "(#{or1}|#{or2})"
 
           {:literal, lit} ->

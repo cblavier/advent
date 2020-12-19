@@ -12,6 +12,6 @@ defmodule Advent.Y2020.Day19.Part2 do
     {rules, messages} = Part1.parse_puzzle(puzzle)
     rules = Map.merge(rules, @overwritten_rules)
     regex = Part1.build_regex(rules, @max_depth)
-    Enum.count(messages, &Regex.match?(regex, &1))
+    Enum.count(messages, &(&1 =~ regex))
   end
 end
