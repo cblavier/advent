@@ -20,13 +20,13 @@ defmodule Advent.Y2020.Day19.Part1 do
              {:literal, replace(tail, ["\"", " "], "")}
 
            tail =~ ~r/( \d+)+ \|( \d+)+/ ->
-             {:or,
+             {:or_rules,
               for expr <- split(tail, " | ") do
                 expr |> split(" ", trim: true) |> Enum.map(&to_integer/1)
               end}
 
            tail =~ ~r/( \d+)+/ ->
-             {:redirects, for(expr <- split(tail, " ", trim: true), do: to_integer(expr))}
+             {:rules, for(expr <- split(tail, " ", trim: true), do: to_integer(expr))}
          end}
       end
 
@@ -45,10 +45,10 @@ defmodule Advent.Y2020.Day19.Part1 do
 
       {_, matches} ->
         case Map.get(rules, index) do
-          {:redirects, redirects} ->
+          {:rules, redirects} ->
             for i <- redirects, into: "", do: build_regex(rules, i, matches, max_depth)
 
-          {:or, [or1, or2]} ->
+          {:or_rules, [or1, or2]} ->
             or1 = for i <- or1, into: "", do: build_regex(rules, i, matches, max_depth)
             or2 = for i <- or2, into: "", do: build_regex(rules, i, matches, max_depth)
             "(#{or1}|#{or2})"
