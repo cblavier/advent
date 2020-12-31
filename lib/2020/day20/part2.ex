@@ -27,7 +27,7 @@ defmodule Advent.Y2020.Day20.Part2 do
     end)
     |> Stream.map(&elem(&1, 1))
     |> Stream.reject(&is_nil/1)
-    |> Enum.min()
+    |> Enum.at(0)
   end
 
   ### Align Tiles

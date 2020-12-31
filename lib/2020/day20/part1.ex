@@ -27,10 +27,6 @@ defmodule Advent.Y2020.Day20.Part1 do
     {Integer.parse(binary, 2) |> elem(0), binary |> reverse() |> Integer.parse(2) |> elem(0)}
   end
 
-  def border_hash(border, :debug) do
-    {border, String.reverse(border)}
-  end
-
   def find_border(rows, :top), do: Enum.at(rows, 0)
   def find_border(rows, :right), do: rows |> Enum.map(&slice(&1, 9, 1)) |> join()
   def find_border(rows, :bottom), do: rows |> Enum.at(-1)
