@@ -27,9 +27,9 @@ defmodule Advent.Y2020.Day21.Part1 do
   end
 
   def find_allergen_food_candidates(allergens_with_foods) do
-    for {allergen, food_lists} <- allergens_with_foods, into: %{} do
-      {allergen, intersection(food_lists)}
-    end
+    for {allergen, food_lists} <- allergens_with_foods,
+        into: %{},
+        do: {allergen, intersection(food_lists)}
   end
 
   def match_allergens(allergens_with_foods, matched \\ %{})
