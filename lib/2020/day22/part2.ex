@@ -9,11 +9,11 @@ defmodule Advent.Y2020.Day22.Part2 do
   def play([[], deck1], _memory), do: {1, deck1}
   def play([deck0, []], _memory), do: {0, deck0}
 
-  def play(decks = [deck0, deck1], memory) do
-    if MapSet.member?(memory, decks) do
+  def play([deck0, deck1], memory) do
+    if MapSet.member?(memory, deck0) do
       {0, deck0}
     else
-      memory = MapSet.put(memory, decks)
+      memory = MapSet.put(memory, deck0)
       {[card0 | deck0], [card1 | deck1]} = {deck0, deck1}
 
       new_decks =
