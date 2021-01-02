@@ -12,28 +12,18 @@ defmodule Advent.Y2020.Day24.Part2 do
   def evolve(tiles, 0), do: tiles
 
   def evolve(tiles, generations) do
-    (black_tiles_flips(tiles) ++ white_tiles_flips(tiles))
+    (tiles_flips(tiles, :black, [0, 3, 4, 5, 6]) ++ tiles_flips(tiles, :white, [2]))
     |> Enum.reduce(tiles, fn pos, tiles -> Part1.flip_tile(tiles, pos) end)
     |> evolve(generations - 1)
   end
 
-  def black_tiles_flips(tiles) do
+  def tiles_flips(tiles, color, counts) do
     tiles
-    |> Stream.filter(fn {_, color} -> color == :black end)
+    |> Stream.filter(fn {_, c} -> c == color end)
     |> Stream.map(fn {pos, _} ->
       {pos, tiles |> neighbor_colors(pos) |> Enum.count(&(&1 == :black))}
     end)
-    |> Stream.filter(fn {_, count} -> count == 0 || count > 2 end)
-    |> Enum.map(&elem(&1, 0))
-  end
-
-  def white_tiles_flips(tiles) do
-    tiles
-    |> Stream.filter(fn {_, color} -> color == :white end)
-    |> Stream.map(fn {pos, _} ->
-      {pos, tiles |> neighbor_colors(pos) |> Enum.count(&(&1 == :black))}
-    end)
-    |> Stream.filter(fn {_, count} -> count == 2 end)
+    |> Stream.filter(fn {_, count} -> count in counts end)
     |> Enum.map(&elem(&1, 0))
   end
 
