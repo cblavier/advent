@@ -1,11 +1,13 @@
 defmodule Advent.Y2020.Day24.Part2 do
   alias Advent.Y2020.Day24.Part1
 
+  @steps 100
+
   def run(puzzle) do
     puzzle
     |> Part1.parse()
     |> Enum.reduce(%{}, &Part1.follow_path/2)
-    |> evolve(100)
+    |> evolve(@steps)
     |> Part1.count(:black)
   end
 
@@ -27,9 +29,8 @@ defmodule Advent.Y2020.Day24.Part2 do
     |> Enum.map(&elem(&1, 0))
   end
 
-  @shifts [{2, 0}, {-2, 0}, {1, -1}, {-1, -1}, {1, 1}, {-1, 1}]
   def neighbor_colors(tiles, {x, y}) do
-    for {shift_x, shift_y} <- @shifts do
+    for {shift_x, shift_y} <- Part1.moves() |> Map.values() do
       Map.get(tiles, {x + shift_x, y + shift_y}, :white)
     end
   end

@@ -23,16 +23,23 @@ defmodule Advent.Y2020.Day24.Part1 do
 
   def follow_path(path, tiles) do
     position =
-      Enum.reduce(path, {0, 0}, fn
-        "e", {x, y} -> {x + 2, y}
-        "w", {x, y} -> {x - 2, y}
-        "se", {x, y} -> {x + 1, y - 1}
-        "sw", {x, y} -> {x - 1, y - 1}
-        "ne", {x, y} -> {x + 1, y + 1}
-        "nw", {x, y} -> {x - 1, y + 1}
+      Enum.reduce(path, {0, 0}, fn dir, {x, y} ->
+        {move_x, move_y} = moves() |> Map.get(dir)
+        {x + move_x, y + move_y}
       end)
 
     flip_tile(tiles, position)
+  end
+
+  def moves do
+    %{
+      "e" => {2, 0},
+      "w" => {-2, 0},
+      "se" => {1, -1},
+      "sw" => {-1, -1},
+      "ne" => {1, 1},
+      "nw" => {-1, 1}
+    }
   end
 
   def flip_tile(tiles, position) do
@@ -44,10 +51,11 @@ defmodule Advent.Y2020.Day24.Part1 do
     |> init_neighbors(position)
   end
 
-  @shifts [{2, 0}, {-2, 0}, {1, -1}, {-1, -1}, {1, 1}, {-1, 1}]
   def init_neighbors(tiles, {x, y}) do
-    Enum.reduce(@shifts, tiles, fn {shift_x, shift_y}, tiles ->
-      Map.update(tiles, {x + shift_x, y + shift_y}, :white, fn c -> c end)
+    moves()
+    |> Map.values()
+    |> Enum.reduce(tiles, fn {shift_x, shift_y}, tiles ->
+      Map.put_new(tiles, {x + shift_x, y + shift_y}, :white)
     end)
   end
 
