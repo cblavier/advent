@@ -19,27 +19,31 @@ defmodule Advent.Y2020.Day23.Part1 do
   end
 
   def build_circle(sequence = [first | _]) do
+    circle = :atomics.new(length(sequence), [])
+
     sequence
     |> Enum.chunk_every(2, 1)
-    |> Enum.reduce(%{}, fn
-      [n, next], acc -> Map.put(acc, n, next)
-      [n], acc -> Map.put(acc, n, first)
+    |> Enum.each(fn
+      [n, next] -> :atomics.put(circle, n, next)
+      [n] -> :atomics.put(circle, n, first)
     end)
+
+    circle
   end
 
   def move(circle, current, max) do
     pick_up = [a, _b, c] = pick_up(circle, current)
     dest = dest(current, pick_up, max)
-    {after_pick_up, circle} = Map.get_and_update(circle, dest, fn n -> {n, a} end)
-    {new_current, circle} = Map.get_and_update(circle, c, fn n -> {n, after_pick_up} end)
-    circle = Map.put(circle, current, new_current)
+    after_pick_up = :atomics.exchange(circle, dest, a)
+    new_current = :atomics.exchange(circle, c, after_pick_up)
+    :atomics.put(circle, current, new_current)
     {new_current, circle}
   end
 
   def pick_up(circle, current) do
-    a = Map.get(circle, current)
-    b = Map.get(circle, a)
-    c = Map.get(circle, b)
+    a = :atomics.get(circle, current)
+    b = :atomics.get(circle, a)
+    c = :atomics.get(circle, b)
     [a, b, c]
   end
 
@@ -50,7 +54,7 @@ defmodule Advent.Y2020.Day23.Part1 do
 
   def print_circle(circle, start, max) do
     Enum.reduce_while(1..max, {start, ""}, fn _, {cup, acc} ->
-      case Map.get(circle, cup) do
+      case :atomics.get(circle, cup) do
         ^start -> {:halt, acc}
         val -> {:cont, {val, acc <> to_string(val)}}
       end
