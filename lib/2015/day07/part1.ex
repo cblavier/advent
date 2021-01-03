@@ -1,108 +1,67 @@
 defmodule Advent.Y2015.Day07.Part1 do
+  use Bitwise
+
   def run(puzzle) do
     puzzle
-    |> String.split("\n")
-    |> Enum.map(&parse_line/1)
-    |> Enum.reduce(%{}, &apply_instruction(&1, &2))
+    |> parse_program()
+    |> run_program()
     |> Map.get("a")
   end
 
-  @regex Regex.compile!(~S/(?<instruction>.*) -> (?<wire>.*)/)
+  def parse_program(puzzle) do
+    puzzle
+    |> String.split("\n")
+    |> Enum.map(&parse_line/1)
+  end
+
   def parse_line(line) do
-    %{"instruction" => instruction, "wire" => wire} = Regex.named_captures(@regex, line)
+    %{"instruction" => instruction, "wire" => wire} = Regex.named_captures(~r/(?<instruction>.*) -> (?<wire>.*)/, line)
 
-    decoded_instruction =
-      case Integer.parse(instruction) do
-        {value, _} -> value
-        :error -> instruction |> String.split(" ") |> List.to_tuple()
-      end
-
-    {decoded_instruction, wire}
+    {
+      case String.split(instruction) do
+        [value] -> maybe_integer(value)
+        [unary, v] -> {operator(unary), maybe_integer(v)}
+        [v1, binary, v2] -> {operator(binary), maybe_integer(v1), maybe_integer(v2)}
+      end,
+      wire
+    }
   end
 
-  def run_instructions(program) do
-    Stream.cycle([0])
-    |> Enum.reduce_while({program, %{}}, fn _, {program, wires} ->
-      {program, wires} =
-        Enum.reduce(program, {program, wires}, fn instruction, {program, wires} ->
-          case apply_instruction(instruction, wires) do
-            nil ->
-              {program, wires}
+  def operator(op), do: op |> String.downcase() |> String.to_atom()
 
-            wires ->
-              # remove current instruction from program
-              {program, wires}
-          end
-        end)
-
-      case {program, wires} do
-        {[], wires} -> {:halt, wires}
-        acc -> {:cont, acc}
-      end
-    end)
-  end
-
-  def apply_instruction({value, output_wire}, wires) when is_integer(value) do
-    put_value(wires, output_wire, value)
-  end
-
-  def apply_instruction({{input_wire}, output_wire}, wires) when is_binary(input_wire) do
-    case Map.get(wires, input_wire) do
-      nil -> nil
-      value -> put_value(wires, output_wire, value)
+  def maybe_integer(s) do
+    case Integer.parse(s) do
+      {value, _} -> value
+      :error -> s
     end
   end
 
-  def apply_instruction({{"NOT", wire}, output_wire}, wires) do
-    case Map.get(wires, wire) do
-      nil -> nil
-      value -> put_value(wires, output_wire, Bitwise.bnot(value))
+  def run_program(program, wires \\ %{})
+  def run_program([], wires), do: wires
+
+  def run_program(program, wires) do
+    can_be_run = Enum.group_by(program, &can_run_instruction?/1)
+    wires = Enum.reduce(can_be_run.true, wires, &run_instruction/2)
+    program = for instruction <- Map.get(can_be_run, :false, []) do
+      replace_wires(instruction, wires)
     end
+    run_program(program, wires)
   end
 
-  def apply_instruction({{wire1, "AND", wire2}, output_wire}, wires) do
-    case {Map.get(wires, wire1), Map.get(wires, wire2)} do
-      {nil, _} -> nil
-      {_, nil} -> nil
-      {value1, value2} -> put_value(wires, output_wire, Bitwise.band(value1, value2))
-    end
-  end
+  def replace_wires({val, output}, wires) when is_binary(val), do: {Map.get(wires, val, val), output}
+  def replace_wires({{op, val}, output}, wires), do: {{op, Map.get(wires, val, val)}, output}
+  def replace_wires({{op, val1, val2}, output}, wires), do: {{op, Map.get(wires, val1, val1), Map.get(wires, val2, val2)}, output}
 
-  def apply_instruction({{wire1, "OR", wire2}, output_wire}, wires) do
-    case {Map.get(wires, wire1), Map.get(wires, wire2)} do
-      {nil, _} -> nil
-      {_, nil} -> nil
-      {value1, value2} -> put_value(wires, output_wire, Bitwise.bor(value1, value2))
-    end
-  end
+  def can_run_instruction?({val, _}) when is_integer(val), do: true
+  def can_run_instruction?({{_op, val}, _}) when is_integer(val), do: true
+  def can_run_instruction?({{_op, val1, val2}, _}) when is_integer(val1) and is_integer(val2), do: true
+  def can_run_instruction?(_), do: false
 
-  def apply_instruction({{wire, "LSHIFT", value}, output_wire}, wires) do
-    value2 = String.to_integer(value)
+  def run_instruction({val, wire}, wires) when is_integer(val), do: Map.put_new(wires, wire, val)
+  def run_instruction({{:not, val}, wire}, wires), do: Map.put_new(wires, wire, ~~~val)
+  def run_instruction({{:or, val1, val2}, wire}, wires), do: Map.put_new(wires, wire, val1 ||| val2)
+  def run_instruction({{:and, val1, val2}, wire}, wires), do: Map.put_new(wires, wire, val1 &&& val2)
+  def run_instruction({{:lshift, val1, val2}, wire}, wires), do: Map.put_new(wires, wire, val1 <<< val2)
+  def run_instruction({{:rshift, val1, val2}, wire}, wires), do: Map.put_new(wires, wire, val1 >>> val2)
 
-    case Map.get(wires, wire) do
-      nil -> nil
-      value1 -> put_value(wires, output_wire, Bitwise.bsl(value1, value2))
-    end
-  end
-
-  def apply_instruction({{wire, "RSHIFT", value}, output_wire}, wires) do
-    value2 = String.to_integer(value)
-
-    case Map.get(wires, wire) do
-      nil -> nil
-      value1 -> put_value(wires, output_wire, Bitwise.bsr(value1, value2))
-    end
-  end
-
-  defp put_value(wires, wire, value) when value < 0 do
-    Map.put(wires, wire, 65536 + value)
-  end
-
-  defp put_value(wires, wire, value) when value > 65535 do
-    Map.put(wires, wire, value - 65536)
-  end
-
-  defp put_value(wires, wire, value) do
-    Map.put(wires, wire, value)
-  end
 end
