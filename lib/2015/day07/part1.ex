@@ -2,29 +2,22 @@ defmodule Advent.Y2015.Day07.Part1 do
   use Bitwise
 
   def run(puzzle) do
-    puzzle
-    |> parse_program()
-    |> run_program()
-    |> Map.get("a")
+    puzzle |> parse_program() |> run_program() |> Map.get("a")
   end
 
   def parse_program(puzzle) do
-    puzzle
-    |> String.split("\n")
-    |> Enum.map(&parse_line/1)
-  end
-
-  def parse_line(line) do
-    %{"instruction" => instruction, "wire" => wire} = Regex.named_captures(~r/(?<instruction>.*) -> (?<wire>.*)/, line)
-
-    {
-      case String.split(instruction) do
-        [value] -> maybe_integer(value)
-        [unary, v] -> {operator(unary), maybe_integer(v)}
-        [v1, binary, v2] -> {operator(binary), maybe_integer(v1), maybe_integer(v2)}
-      end,
-      wire
-    }
+    regex = ~r/(?<instruction>.*) -> (?<wire>.*)/
+    for line <- String.split(puzzle, "\n") do
+      %{"instruction" => instruction, "wire" => wire} = Regex.named_captures(regex, line)
+      {
+        case String.split(instruction) do
+          [value] -> maybe_integer(value)
+          [unary, v] -> {operator(unary), maybe_integer(v)}
+          [v1, binary, v2] -> {operator(binary), maybe_integer(v1), maybe_integer(v2)}
+        end,
+        wire
+      }
+    end
   end
 
   def operator(op), do: op |> String.downcase() |> String.to_atom()
