@@ -9,24 +9,21 @@ defmodule Advent.Y2015.Day09.Part1 do
   end
 
   def parse_puzzle(puzzle) do
-    puzzle
-    |> String.split("\n")
-    |> Enum.reduce({%{}, []}, fn line, {paths, cities} ->
-      [path, distance] = String.split(line, " = ")
-      [from, to] = String.split(path, " to ")
-      distance = String.to_integer(distance)
-      paths = paths |> Map.put({from, to}, distance) |> Map.put({to, from}, distance)
-      cities = Enum.uniq([from, to | cities])
-      {paths, cities}
-    end)
+    for line <- String.split(puzzle, "\n"), reduce: {%{}, []} do
+      {paths, cities} ->
+        [path, distance] = String.split(line, " = ")
+        [from, to] = String.split(path, " to ")
+        distance = String.to_integer(distance)
+        paths = paths |> Map.put({from, to}, distance) |> Map.put({to, from}, distance)
+        cities = Enum.uniq([from, to | cities])
+        {paths, cities}
+    end
   end
 
   def permutations([]), do: [[]]
 
   def permutations(list) do
-    for elem <- list, rest <- permutations(list -- [elem]) do
-      [elem | rest]
-    end
+    for i <- list, rest <- permutations(list -- [i]), do: [i | rest]
   end
 
   def distance(cities, paths, distance \\ 0)
