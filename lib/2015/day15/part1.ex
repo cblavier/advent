@@ -23,13 +23,19 @@ defmodule Advent.Y2015.Day15.Part1 do
   end
 
   def repartitions(teaspoons) do
-    for i1 <- 0..teaspoons,
-        i2 <- 0..teaspoons,
-        i3 <- 0..teaspoons,
-        i4 <- 0..teaspoons,
-        i1 + i2 + i3 + i4 == teaspoons,
-        do: [i1, i2, i3, i4]
+    for(
+      i1 <- 0..teaspoons,
+      i2 <- i1..teaspoons,
+      i3 <- i2..teaspoons,
+      i4 <- i3..teaspoons,
+      i1 + i2 + i3 + i4 == teaspoons,
+      do: [i1, i2, i3, i4]
+    )
+    |> Enum.flat_map(&permutations/1)
   end
+
+  def permutations([]), do: [[]]
+  def permutations(list), do: for(i <- list, rest <- permutations(list -- [i]), do: [i | rest])
 
   def property_scores(ingredients, property_index),
     do: for(i <- ingredients, do: Enum.at(i, property_index))
