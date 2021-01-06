@@ -5,11 +5,10 @@ defmodule Advent.Y2015.Day17Test do
   @puzzle Advent.Puzzle.load(2015, 17)
 
   test "run part1 puzzle" do
-    assert Part1.run(@puzzle) == 42
+    assert Part1.run(@puzzle) == 4372
   end
 
-  @tag :skip
   test "run part2 puzzle" do
-    assert Part2.run(@puzzle) == 42
+    assert Part2.run(@puzzle) == 4
   end
 end

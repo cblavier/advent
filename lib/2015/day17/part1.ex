@@ -1,22 +1,33 @@
 defmodule Advent.Y2015.Day17.Part1 do
-  @buckets [5, 5, 10, 15, 20]
+  @target 150
 
-  def run(_puzzle) do
-    1..length(@buckets)
-    |> Enum.flat_map(fn n -> @buckets |> Enum.with_index() |> permutations(n) end)
-    |> Enum.filter(fn permutation ->
-      permutation |> Enum.map(&elem(&1, 0)) |> Enum.sum() == 25
-    end)
-    |> Enum.map(&Enum.sort/1)
-    |> Enum.uniq()
+  def run(puzzle) do
+    puzzle
+    |> buckets()
+    |> combinations_for_target(@target)
+    |> length()
   end
 
-  def permutations([], _n), do: [[]]
-  def permutations(_list, 0), do: [[]]
+  def buckets(puzzle) do
+    for n <- String.split(puzzle, "\n"),
+        do: String.to_integer(n)
+  end
 
-  def permutations(list, n) do
-    for head <- list,
-        tail <- permutations(list -- [head], n - 1),
-        do: [head | tail]
+  def combinations_for_target(buckets, target) do
+    1..length(buckets)
+    |> Task.async_stream(fn n ->
+      buckets
+      |> combinations(n)
+      |> Enum.filter(&(Enum.sum(&1) == target))
+    end)
+    |> Enum.flat_map(&elem(&1, 1))
+  end
+
+  def combinations(_, 0), do: [[]]
+  def combinations([], _), do: []
+
+  def combinations([head | tail], n) do
+    for(rest <- combinations(tail, n - 1), do: [head | rest]) ++
+      combinations(tail, n)
   end
 end
