@@ -9,6 +9,6 @@ defmodule Advent.Y2015.Day18Test do
   end
 
   test "run part2 puzzle" do
-    assert Part2.run(@puzzle) == 42
+    assert Part2.run(@puzzle) == 781
   end
 end
