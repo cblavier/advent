@@ -1,5 +1,5 @@
 defmodule Advent.Y2020.Day14.Part1 do
-  use Bitwise
+  import Bitwise
 
   def run(puzzle) do
     puzzle
