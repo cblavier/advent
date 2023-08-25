@@ -7,11 +7,12 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    container:
-      image: elixir:1.11.1-slim
-
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v3
+    - uses: erlef/setup-beam@v1
+      with:
+        otp-version: 26.0.2
+        elixir-version: 1.15.4
     - name: Install Dependencies
       run: |
         mix local.rebar --force
