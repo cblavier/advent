@@ -1,72 +1,57 @@
 defmodule Advent.Y2022.Day07.Part1 do
-  # %{
-  #   "foo" => %{type: :dir, content: %{ ... }},
-  #   "bar" => %{type: :file, size: 10_0128}
-  # ]
-
-  # /
-  #   a
-  #   b.txt
-  #   c.dat
-  #   d
-
-  # /
-  #   a
-  #     e
-  #     f
-  #     g
-  #     h.lst
-  #   b.txt
-  #   c.dat
-  #   d
-
-  # /
-  #   a
-  #     e
-  #     f
-  #     g
-  #     h.lst
-  #   b.txt
-  #   c.dat
-  #   d
-
   @root %{"/" => %{type: :dir, content: %{}}}
 
   def run(puzzle) do
     puzzle
     |> String.split("\n")
-    |> run_instruction(@root)
+    |> build_tree(@root)
+    |> find_at_most(100_000)
   end
 
-  defp run_instruction([], acc), do: acc
+  def build_tree([], acc), do: acc
+  def build_tree(["$ cd .." | _puzzle], acc), do: acc
 
-  defp run_instruction(["$ cd .." | puzzle], _acc) do
-    run_instruction(puzzle, %{})
+  def build_tree(["$ cd " <> dir | puzzle], acc) do
+    {index, _} =
+      Enum.reduce_while(puzzle, {0, 0}, fn
+        "$ cd ..", {index, 0} -> {:halt, {index, 0}}
+        "$ cd ..", {index, depth} -> {:cont, {index + 1, depth - 1}}
+        "$ cd " <> _dir, {index, depth} -> {:cont, {index + 1, depth + 1}}
+        _instruction, {index, depth} -> {:cont, {index + 1, depth}}
+      end)
+
+    {dir_puzzle, remaining_puzzle} = Enum.split(puzzle, index + 1)
+    content = build_tree(dir_puzzle, %{})
+    total_size = Enum.reduce(content, 0, fn {_, %{size: size}}, acc -> acc + size end)
+    acc = acc |> put_in([dir, :content], content) |> put_in([dir, :size], total_size)
+    build_tree(remaining_puzzle, acc)
   end
 
-  defp run_instruction(["$ cd " <> dir | puzzle], acc) do
-    IO.inspect("cd #{dir}")
-    content = run_instruction(puzzle, %{})
-    IO.inspect(content, label: "received #{dir} content")
-    Map.put(acc, dir, content)
+  def build_tree(["$ ls" | puzzle], acc) do
+    build_tree(puzzle, acc)
   end
 
-  defp run_instruction(["$ ls" | puzzle], acc) do
-    IO.inspect("ls")
-    IO.inspect(acc)
-    run_instruction(puzzle, acc)
-  end
-
-  defp run_instruction(["dir " <> dir | puzzle], acc) do
+  def build_tree(["dir " <> dir | puzzle], acc) do
     acc = Map.put(acc, dir, %{type: :dir, content: %{}})
-    IO.inspect(acc)
-    run_instruction(puzzle, acc)
+    build_tree(puzzle, acc)
   end
 
-  defp run_instruction([size_and_file | puzzle], acc) do
-    IO.inspect(size_and_file)
+  def build_tree([size_and_file | puzzle], acc) do
     [size, file] = String.split(size_and_file, " ")
     acc = Map.put(acc, file, %{type: :file, size: String.to_integer(size)})
-    run_instruction(puzzle, acc)
+    build_tree(puzzle, acc)
+  end
+
+  defp find_at_most(tree, max_size, acc \\ 0) do
+    Enum.reduce(tree, acc, fn
+      {_, %{type: :dir, size: size, content: tree}}, acc when size <= max_size ->
+        find_at_most(tree, max_size, acc + size)
+
+      {_, %{type: :dir, size: size, content: tree}}, acc when size > max_size ->
+        find_at_most(tree, max_size, acc)
+
+      _, acc ->
+        acc
+    end)
   end
 end

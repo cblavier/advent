@@ -54,11 +54,11 @@ defmodule Mix.Tasks.Advent.Gen do
     :inets.start()
     :ssl.start()
 
-    headers = [{'cookie', String.to_charlist("session=" <> System.get_env("SESSION_COOKIE"))}]
-    url = 'https://adventofcode.com/#{year}/day/#{day}/input'
+    headers = [{~c"cookie", String.to_charlist("session=" <> System.get_env("SESSION_COOKIE"))}]
+    url = ~c"https://adventofcode.com/#{year}/day/#{day}/input"
 
     case :httpc.request(:get, {url, headers}, [], []) do
-      {:ok, {{'HTTP/1.1', 200, 'OK'}, _, puzzle}} ->
+      {:ok, {{~c"HTTP/1.1", 200, ~c"OK"}, _, puzzle}} ->
         to_string(puzzle)
 
       _ ->
