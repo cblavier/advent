@@ -8,8 +8,6 @@ defmodule Advent.Y2022.Day12Test do
     assert Part1.run(@puzzle) == 437
   end
 
-  @tag timeout: :infinity
-  @tag :skip
   test "run part2 puzzle" do
     assert Part2.run(@puzzle) == 430
   end

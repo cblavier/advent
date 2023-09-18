@@ -10,7 +10,7 @@ defmodule Advent.Y2022.Day12.Part1 do
   def run(puzzle) do
     map = parse_map(puzzle)
     {start_cell, end_cell} = {find_cell(map, :start), find_cell(map, :end)}
-    map = explore_map(map, start_cell, 0)
+    map = explore_map(map, start_cell)
     map.cells |> Map.get(end_cell.position) |> Map.get(:distance)
   end
 
@@ -42,18 +42,13 @@ defmodule Advent.Y2022.Day12.Part1 do
     end)
   end
 
-  def explore_map(map, cell, distance, best_distance \\ nil)
+  def explore_map(map, cell, distance \\ 0)
 
-  def explore_map(_, _, distance, best_distance)
-      when not is_nil(best_distance) and distance >= best_distance do
-    best_distance
-  end
-
-  def explore_map(map, cell = %Cell{kind: :end}, distance, _) do
+  def explore_map(map, cell = %Cell{kind: :end}, distance) do
     %{map | cells: Map.update!(map.cells, cell.position, &%{&1 | distance: distance})}
   end
 
-  def explore_map(map, cell, distance, _) do
+  def explore_map(map, cell, distance) do
     map = %{map | cells: Map.update!(map.cells, cell.position, &%{&1 | distance: distance})}
 
     map
