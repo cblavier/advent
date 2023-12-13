@@ -8,7 +8,7 @@ defmodule Advent.Y2022.Day16Test do
     assert Part1.run(@puzzle) == 1845
   end
 
-  @tag :wip
+  @tag :skip
   test "run part2 puzzle" do
     assert Part2.run(@puzzle) == 42
   end
