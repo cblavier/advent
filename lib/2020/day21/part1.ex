@@ -12,7 +12,7 @@ defmodule Advent.Y2020.Day21.Part1 do
   end
 
   def parse_line(line) do
-    [foods, allergens] = line |> String.slice(0..-2) |> String.split(" (contains ")
+    [foods, allergens] = line |> String.slice(0..-2//1) |> String.split(" (contains ")
     foods = foods |> String.split(" ") |> Enum.map(&String.trim/1)
     allergens = allergens |> String.split(",") |> Enum.map(&String.trim/1)
     {foods, allergens}

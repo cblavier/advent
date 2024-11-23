@@ -67,6 +67,6 @@ defmodule Advent.Y2019.Day13.Part2 do
   end
 
   defp play_for_free(puzzle) do
-    "2" <> String.slice(puzzle, 1..-1)
+    "2" <> String.slice(puzzle, 1..-1//-1)
   end
 end

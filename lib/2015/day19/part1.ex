@@ -18,8 +18,8 @@ defmodule Advent.Y2015.Day19.Part1 do
     indices = Regex.scan(~r/#{rule_pattern}/, molecule, return: :index)
 
     for [{match_start, match_length}] <- indices do
-      head = String.slice(molecule, 0..(match_start - 1))
-      tail = String.slice(molecule, (match_start + match_length)..-1)
+      head = String.slice(molecule, 0..(match_start - 1)//1)
+      tail = String.slice(molecule, (match_start + match_length)..-1//1)
       head <> rule_replacement <> tail
     end
   end

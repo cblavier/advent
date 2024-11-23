@@ -13,7 +13,7 @@ defmodule Advent.Y2020.Day05.Part2 do
     |> find_matching_seat()
   end
 
-  defp find_candidates(seats, row_range = min_row..max_row, col_range) do
+  defp find_candidates(seats, row_range = min_row..max_row//_, col_range) do
     for row <- row_range,
         col <- col_range,
         row != min_row,

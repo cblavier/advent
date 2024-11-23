@@ -5,7 +5,7 @@ defmodule Advent.Y2022.Day15.Part2 do
   def run(puzzle) do
     instructions = parse_instructions(puzzle)
 
-    @max_xy..0
+    @max_xy..0//-1
     |> Task.async_stream(&{get_beacon_exclusions(instructions, &1), &1})
     |> Stream.map(&elem(&1, 1))
     |> Stream.reject(fn
@@ -14,7 +14,7 @@ defmodule Advent.Y2022.Day15.Part2 do
     end)
     |> Stream.take(1)
     |> Enum.at(0)
-    |> then(fn {[x..x], y} -> x * @max_xy + y end)
+    |> then(fn {[x..x//_], y} -> x * @max_xy + y end)
   end
 
   defp get_beacon_exclusions(instructions, y) do
@@ -31,8 +31,8 @@ defmodule Advent.Y2022.Day15.Part2 do
       end
     end)
     |> Stream.reject(&is_nil/1)
-    |> Enum.reduce([0..@max_xy], fn range = r1..r2, acc ->
-      Enum.flat_map(acc, fn acc = a1..a2 ->
+    |> Enum.reduce([0..@max_xy], fn range = r1..r2//_, acc ->
+      Enum.flat_map(acc, fn acc = a1..a2//_ ->
         cond do
           acc == [] -> []
           Range.disjoint?(acc, range) -> [acc]

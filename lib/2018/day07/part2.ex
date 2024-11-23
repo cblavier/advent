@@ -113,7 +113,7 @@ defmodule Advent.Y2018.Day07.Part2 do
   def npop(list, n) do
     {
       Enum.slice(list, 0, n),
-      Enum.slice(list, n..-1)
+      Enum.slice(list, n..-1//1)
     }
   end
 end

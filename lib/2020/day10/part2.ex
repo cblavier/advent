@@ -29,7 +29,7 @@ defmodule Advent.Y2020.Day10.Part2 do
     |> Enum.with_index()
     |> Enum.filter(fn {joltage, _index} -> joltage - current <= 3 end)
     |> Enum.map(fn {joltage, index} ->
-      {joltage, Enum.slice(joltages, (index + 1)..-1)}
+      {joltage, Enum.slice(joltages, (index + 1)..-1//1)}
     end)
     |> Enum.map(fn {joltage, tail} ->
       memoized_find_arrangements(tail, joltage, memo)

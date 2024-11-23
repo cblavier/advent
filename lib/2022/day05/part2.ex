@@ -39,7 +39,7 @@ defmodule Advent.Y2022.Day05.Part2 do
       {stacks, popped} ->
         if index == from do
           popped = Enum.slice(stack, 0, amount)
-          stack = Enum.slice(stack, amount..-1)
+          stack = Enum.slice(stack, amount..-1//1)
           {stacks ++ [stack], popped}
         else
           {stacks ++ [stack], popped}

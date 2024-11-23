@@ -177,7 +177,7 @@ defmodule Advent.Y2020.Day20.Part2 do
   def flip_rows(rows, true), do: Enum.reverse(rows)
 
   def remove_borders(rows) do
-    rows |> Enum.slice(1..-2) |> Enum.map(&String.slice(&1, 1..-2))
+    rows |> Enum.slice(1..-2//1) |> Enum.map(&String.slice(&1, 1..-2//1))
   end
 
   ### Search for monsters

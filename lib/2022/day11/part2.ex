@@ -46,7 +46,6 @@ defmodule Advent.Y2022.Day11.Part2 do
 
     monkeys
     |> Enum.map(& &1.inspections)
-    |> IO.inspect()
     |> Enum.sort(:desc)
     |> Enum.take(2)
     |> Enum.product()
