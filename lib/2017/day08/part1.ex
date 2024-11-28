@@ -33,10 +33,7 @@ defmodule Advent.Y2017.Day08.Part1 do
   def value(reg, "inc", val, registers), do: Map.get(registers, reg, 0) + val
   def value(reg, "dec", val, registers), do: Map.get(registers, reg, 0) - val
 
-  def eval_cond(reg, ">", v, regs), do: Map.get(regs, reg, 0) > v
-  def eval_cond(reg, "<", v, regs), do: Map.get(regs, reg, 0) < v
-  def eval_cond(reg, ">=", v, regs), do: Map.get(regs, reg, 0) >= v
-  def eval_cond(reg, "<=", v, regs), do: Map.get(regs, reg, 0) <= v
-  def eval_cond(reg, "==", v, regs), do: Map.get(regs, reg, 0) == v
-  def eval_cond(reg, "!=", v, regs), do: Map.get(regs, reg, 0) != v
+  def eval_cond(reg, op, v, regs) do
+    apply(Kernel, String.to_atom(op), [Map.get(regs, reg, 0), v])
+  end
 end
