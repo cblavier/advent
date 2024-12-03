@@ -1,24 +1,14 @@
 defmodule Advent.Y2024.Day03.Part2 do
-  alias Advent.Y2024.Day03.Part1
+  import Advent.Y2024.Day03.Part1
 
   def run(puzzle) do
-    Regex.split(~r/mul\(\d+,\d+\)|(do\(\))|(don't\(\))/, puzzle, include_captures: true)
+    Regex.scan(~r/(mul\(\d+,\d+\))|(do\(\))|(don't\(\))/, puzzle, capture: :all_but_first)
+    |> Enum.flat_map(&Enum.reject(&1, fn match -> match == "" end))
     |> Enum.reduce(%{sum: 0, enabled: true}, fn
-      "do()", acc ->
-        %{acc | enabled: true}
-
-      "don't()", acc ->
-        %{acc | enabled: false}
-
-      s, acc = %{enabled: true, sum: sum} ->
-        if String.match?(s, ~r|mul\(\d+,\d+\)|) do
-          %{acc | sum: sum + Part1.evaluate_mul(s)}
-        else
-          acc
-        end
-
-      _, acc ->
-        acc
+      "do()", acc -> %{acc | enabled: true}
+      "don't()", acc -> %{acc | enabled: false}
+      s, acc = %{enabled: true, sum: sum} -> %{acc | sum: sum + evaluate_mul(s)}
+      _s, acc = %{enabled: false} -> acc
     end)
     |> Map.get(:sum)
   end
