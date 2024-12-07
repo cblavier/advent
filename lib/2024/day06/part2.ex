@@ -7,7 +7,7 @@ defmodule Advent.Y2024.Day06.Part2 do
     {map, pos_and_dir} = parse(puzzle)
 
     map
-    |> empty_cells()
+    |> potential_obstacles(pos_and_dir)
     |> Task.async_stream(&(map |> Map.put(&1, :wall) |> explore(pos_and_dir)))
     |> Enum.count(&(&1 == {:ok, :loop}))
   end
@@ -29,11 +29,19 @@ defmodule Advent.Y2024.Day06.Part2 do
     end
   end
 
-  defp empty_cells(map) do
-    for x <- 0..@grid_size, y <- 0..@grid_size, Map.get(map, {x, y}) == nil, do: {x, y}
+  defp potential_obstacles(map, pos_and_dir) do
+    {:exit, map} = explore(map, pos_and_dir)
+
+    Enum.filter(map, fn
+      {_pos, {:visited, _}} -> true
+      _ -> false
+    end)
+    |> Enum.map(&elem(&1, 0))
   end
 
-  defp explore(_map, {x, y, _dir}) when x not in 0..@grid_size or y not in 0..@grid_size, do: :exit
+  defp explore(map, {x, y, _dir}) when x not in 0..@grid_size or y not in 0..@grid_size do
+    {:exit, map}
+  end
 
   defp explore(map, {x, y, dir}) do
     map = mark(map, {x, y, dir})
