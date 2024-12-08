@@ -1,5 +1,5 @@
 defmodule Advent.Y2024.Day05Test do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
   alias Advent.Y2024.Day05.{Part1, Part2}
 
   @puzzle Advent.Puzzle.load(2024, 05)
